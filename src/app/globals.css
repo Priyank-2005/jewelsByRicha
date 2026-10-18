@@ -1,0 +1,145 @@
+@import "tailwindcss";
+
+@theme {
+  /* Jewels by Richa — Gold · Ivory · Black */
+  --color-ivory: #fbf8f1;
+  --color-cream: #f4ede0;
+  --color-beige: #e9dfcd;
+  --color-ink: #121110;
+  --color-ink-soft: #2b2926;
+  --color-wine: #2e1418;
+  --color-muted: #7a7266;
+  --color-gold: #b8913a;
+  --color-gold-mid: #c9a24b;
+  --color-gold-light: #e6cf93;
+  --color-gold-deep: #8a6a22;
+  --color-line: #e5dcc8;
+
+  --shadow-soft: 0 12px 40px -14px rgba(138, 106, 34, 0.25);
+  --shadow-lift: 0 22px 48px -16px rgba(18, 17, 16, 0.28);
+}
+
+@theme inline {
+  --font-serif: var(--font-cormorant), "Times New Roman", serif;
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-script: var(--font-great-vibes), "Brush Script MT", cursive;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    background: var(--color-ivory);
+  }
+  body {
+    background: var(--color-ivory);
+    color: var(--color-ink);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+  .font-serif {
+    font-variant-numeric: lining-nums;
+  }
+  *:focus-visible {
+    outline: 1.5px solid var(--color-gold);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: var(--color-gold-light);
+    color: var(--color-ink);
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-8 py-3 text-xs font-medium uppercase tracking-[0.22em] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-dark {
+    @apply inline-flex items-center justify-center gap-2 px-8 py-3 text-xs font-medium uppercase tracking-[0.22em] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed bg-ink text-ivory hover:bg-gold-deep;
+  }
+  .btn-gold {
+    @apply inline-flex items-center justify-center gap-2 px-8 py-3 text-xs font-medium uppercase tracking-[0.22em] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed text-ink;
+    background: linear-gradient(135deg, var(--color-gold-light), var(--color-gold-mid) 55%, var(--color-gold));
+  }
+  .btn-gold:hover {
+    filter: brightness(1.07);
+    box-shadow: var(--shadow-soft);
+  }
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 px-8 py-3 text-xs font-medium uppercase tracking-[0.22em] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed border border-ink text-ink hover:bg-ink hover:text-ivory;
+  }
+  .eyebrow {
+    @apply text-[11px] font-medium uppercase tracking-[0.32em] text-gold;
+  }
+  .gold-rule {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--color-gold-mid), transparent);
+  }
+  .input {
+    @apply w-full border border-line bg-white px-4 py-3 text-sm text-ink outline-none transition-colors placeholder:text-muted/70 focus:border-gold;
+  }
+  .label {
+    @apply mb-1.5 block text-[11px] font-medium uppercase tracking-[0.18em] text-muted;
+  }
+  /* Admin */
+  .a-card {
+    @apply rounded-xl border border-line bg-white shadow-[0_1px_2px_rgba(18,17,16,0.04)];
+  }
+  .a-input {
+    @apply w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink outline-none transition-colors placeholder:text-muted/70 focus:border-gold focus:ring-2 focus:ring-gold/15;
+  }
+  .a-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50;
+  }
+  .a-btn-dark {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50 bg-ink text-ivory hover:bg-ink-soft;
+  }
+  .a-btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50 border border-line bg-white text-ink hover:bg-cream;
+  }
+  .a-th {
+    @apply px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-muted;
+  }
+  .a-td {
+    @apply px-4 py-3 text-sm;
+  }
+}
+
+@layer utilities {
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .animate-marquee {
+    animation: marquee 38s linear infinite;
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes shimmer {
+  from {
+    transform: translateX(-120%);
+  }
+  to {
+    transform: translateX(220%);
+  }
+}
+
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-gold-light);
+  border-radius: 10px;
+}
