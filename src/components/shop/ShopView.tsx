@@ -49,7 +49,7 @@ export function ShopView({ collectionSlug, categorySlug }: { collectionSlug?: st
     return out;
   }, [products, collection, category, band, inStock, sort]);
 
-  const banner = (category && categoryCover(category, products)) || (collection?.slug === "festive" ? HERO.bridal : collection?.slug === "anti-tarnish" ? HERO.necklace : HERO.hoops);
+  const banner = (category && categoryCover(category, products)) || (collection?.slug === "festive" ? HERO.jhumka : collection?.slug === "anti-tarnish" ? HERO.necklace : HERO.hoops);
   const title = category?.name ?? collection?.name ?? "All Jewellery";
   const blurb = category?.description ?? collection?.description ?? "Every piece from Jewels by Richa — anti-tarnish, waterproof and made to be worn daily.";
 

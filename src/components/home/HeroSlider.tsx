@@ -17,7 +17,7 @@ const SLIDES = [
         <span className="font-script text-gold-mid">never fades</span>
       </>
     ),
-    text: "Light, skin-friendly pieces that go from the shower to the shaadi — and still shine tomorrow.",
+    text: "Light, skin-friendly pieces that go from the shower to the party — and still shine tomorrow.",
     cta: { label: "Shop anti tarnish", href: "/collections/anti-tarnish" },
     img: HERO.necklace,
     pos: "object-[68%_45%] md:object-[60%_50%]",
@@ -31,24 +31,24 @@ const SLIDES = [
         for <span className="font-script text-gold-mid">celebrations</span>
       </>
     ),
-    text: "Kashmiri earrings, moissanite sparkle and heirloom-inspired kadas for the season of shaadis.",
+    text: "Kashmiri earrings, moissanite sparkle and heirloom-inspired kadas for every festive occasion.",
     cta: { label: "Shop festive", href: "/collections/festive" },
     img: HERO.jhumka,
     pos: "object-[50%_55%]",
   },
   {
-    eyebrow: "Heritage collection",
+    eyebrow: "Heritage kadas",
     title: (
       <>
-        Made for your
+        Kadas with
         <br />
-        <span className="font-script text-gold-mid">big day</span>
+        <span className="font-script text-gold-mid">a story</span>
       </>
     ),
-    text: "Statement necklaces, heritage kadas and AD sets with the grandeur of bridal gold.",
+    text: "Heritage kadas and American-diamond bangles with an heirloom finish — made to be stacked and treasured.",
     cta: { label: "Shop heritage kada", href: "/collections/festive/heritage-bangle-kada" },
-    img: HERO.bridal,
-    pos: "object-[50%_38%]",
+    img: HERO.kadas,
+    pos: "object-[50%_50%]",
   },
 ];
 

@@ -63,7 +63,7 @@ export function Navbar() {
                     </Link>
                    </div>
                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                   <img src={col.slug === "festive" ? HERO.bridal : HERO.necklace} alt="" className="hidden h-auto w-56 object-cover lg:block" />
+                   <img src={col.slug === "festive" ? HERO.jhumka : HERO.necklace} alt="" className="hidden h-auto w-56 object-cover lg:block" />
                   </div>
                 )}
               </div>

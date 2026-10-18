@@ -27,7 +27,7 @@ const TRUST = [
 
 const REVIEWS = [
   { name: "Ananya Sharma", city: "Jaipur", item: "Virasat Heritage Kada", text: "I've worn my kada in the shower for three months — it still looks brand new. Looks far more expensive than it is." },
-  { name: "Priya Mehta", city: "Mumbai", item: "Kashmiri Chandbali", text: "Wore these to my cousin's wedding and got compliments all evening. The packaging felt so premium." },
+  { name: "Priya Mehta", city: "Mumbai", item: "Kashmiri Chandbali", text: "Wore these to a family function and got compliments all evening. The packaging felt so premium." },
   { name: "Simran Kaur", city: "Chandigarh", item: "Snake Chain Necklace", text: "Finally jewellery that doesn't turn my neck green. Light, elegant and I never take it off." },
 ];
 
@@ -72,7 +72,7 @@ export default function HomePage() {
         <motion.div {...rise}><SectionHead eyebrow="Two worlds, one signature" title="Our collections" /></motion.div>
         <div className="grid gap-5 md:grid-cols-2">
           {[
-            { slug: "festive", img: HERO.bridal, pos: "object-[50%_30%]", cta: "Explore festive" },
+            { slug: "festive", img: HERO.jhumka, pos: "object-[50%_55%]", cta: "Explore festive" },
             { slug: "anti-tarnish", img: HERO.necklace, pos: "object-[60%_50%]", cta: "Explore everyday" },
           ].map((c, i) => {
             const col = collections.find((x) => x.slug === c.slug);
@@ -187,13 +187,13 @@ export default function HomePage() {
       {/* ───────── FESTIVE BANNER ───────── */}
       <section className="relative isolate overflow-hidden">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={HERO.festiveWoman} alt="" className="absolute inset-0 -z-10 h-full w-full object-cover object-[50%_35%]" />
+        <img src={HERO.kada} alt="" className="absolute inset-0 -z-10 h-full w-full object-cover object-[78%_50%]" />
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-ink/90 via-ink/60 to-ink/10" />
         <div className="mx-auto max-w-7xl px-4 py-24 text-ivory md:px-8 md:py-36">
           <motion.div {...rise} className="max-w-xl">
-            <p className="eyebrow !text-gold-light">Wedding &amp; festive season</p>
+            <p className="eyebrow !text-gold-light">Festive season</p>
             <h2 className="mt-4 font-serif text-5xl font-light leading-[1.05] md:text-7xl">Dressed for <span className="font-script text-gold-mid md:text-8xl">every celebration</span></h2>
-            <p className="mt-5 text-ivory/75">Kashmiri earrings, heritage kadas, moissanite sparkle and AD sets — handpicked for weddings, Diwali and everything in between.</p>
+            <p className="mt-5 text-ivory/75">Kashmiri earrings, heritage kadas, moissanite sparkle and AD sets — handpicked for Diwali, festivals and every celebration.</p>
             <Link href="/collections/festive" className="btn-gold mt-9">Shop the festive collection</Link>
           </motion.div>
         </div>

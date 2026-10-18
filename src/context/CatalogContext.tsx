@@ -13,7 +13,7 @@ import { CATEGORIES, COLLECTIONS, type Category, type Collection } from "@/data/
 import { PRODUCTS, type Product } from "@/data/products";
 import { COUPONS, CUSTOMERS, ORDERS, type Coupon, type Customer, type Order, type OrderStatus } from "@/data/admin";
 
-const KEY = "jbr_catalog_v4";
+const KEY = "jbr_catalog_v5";
 
 interface State {
   products: Product[];

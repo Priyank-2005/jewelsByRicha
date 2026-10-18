@@ -41,7 +41,7 @@ export const COLLECTIONS: Collection[] = [
     slug: "festive",
     tagline: "Heirloom-inspired. Made to be noticed.",
     description:
-      "Statement kadas, Kashmiri-inspired pieces and sparkling American-diamond sets for weddings, festivals and every celebration in between.",
+      "Statement kadas, Kashmiri-inspired pieces and sparkling American-diamond sets for festivals, parties and every celebration in between.",
   },
   {
     id: "col-anti-tarnish",
