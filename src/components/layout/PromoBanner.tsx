@@ -16,7 +16,7 @@ export function PromoBanner() {
     return () => clearInterval(t);
   }, []);
   return (
-    <div className="relative z-50 flex h-9 items-center justify-center overflow-hidden bg-ink px-4 text-center text-[9.5px] font-medium uppercase tracking-[0.14em] sm:text-[10.5px] sm:tracking-[0.24em] text-gold-light md:text-[11px]">
+    <div className="relative z-50 flex h-10 items-center justify-center overflow-hidden bg-ink px-4 text-center text-[9px] font-medium uppercase tracking-[0.28em] sm:text-[10px] sm:tracking-[0.32em] text-gold-light/90 md:text-[10.5px]" style={{ borderBottom: '1px solid rgba(196, 154, 60, 0.2)' }}>
       {MESSAGES.map((m, k) => (
         <span key={m} className={`absolute inset-x-4 transition-all duration-700 ${k === i ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"}`}>
           {m}

@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   openGraph: { type: "website", siteName: BRAND.name, title: BRAND.name, description: BRAND.positioning, locale: "en_IN" },
 };
 
-export const viewport: Viewport = { themeColor: "#fbf8f1" };
+export const viewport: Viewport = { themeColor: "#faf7f2" };
 
 export default function StoreLayout({ children }: { children: React.ReactNode }) {
   return (

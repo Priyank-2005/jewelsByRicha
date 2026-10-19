@@ -9,7 +9,7 @@ export default function AllCategoriesPage() {
   const { collections, categories, products } = useCatalog();
   return (
     <>
-      <section className="bg-cream">
+      <section className="border-b border-[#ebd8cc] bg-gradient-to-b from-[#fdf8f4] via-[#faf2eb] to-[#f6e9e0]">
         <div className="mx-auto max-w-7xl px-4 py-14 text-center md:px-8 md:py-20">
           <nav className="mb-4 text-xs uppercase tracking-[0.2em] text-muted">
             <Link href="/" className="hover:text-ink">Home</Link><span className="mx-2">/</span><span className="text-ink">All categories</span>
@@ -31,7 +31,7 @@ export default function AllCategoriesPage() {
                   const n = products.filter((p) => p.categoryId === c.id && p.status === "ACTIVE").length;
                   return (
                     <Link key={c.id} href={`/collections/${col.slug}/${c.slug}`} className="group block text-center">
-                      <div className="relative aspect-[3/4] overflow-hidden rounded-t-[999px] bg-beige ring-1 ring-gold-light transition-all group-hover:ring-2 group-hover:ring-gold">
+                      <div className="relative aspect-[3/4] overflow-hidden rounded-t-[999px] bg-white ring-1 ring-[#c49e49]/40 transition-all duration-500 group-hover:ring-2 group-hover:ring-[#c49e49]">
                         {img && (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img src={img} alt={c.name} className="h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-110" />

@@ -1,10 +1,10 @@
 import type { ArtKind, Tone } from "@/data/catalog";
 
 const TONES: Record<Tone, { bg1: string; bg2: string; metal1: string; metal2: string; stone: string; accent: string }> = {
-  gold: { bg1: "#fbf6ea", bg2: "#efe3c8", metal1: "#e6cf93", metal2: "#a87f2a", stone: "#fffdf6", accent: "#121110" },
-  rose: { bg1: "#fbf1ea", bg2: "#f0d9ca", metal1: "#f0c9a8", metal2: "#b9774f", stone: "#fff7f1", accent: "#3a2418" },
-  onyx: { bg1: "#f1ede4", bg2: "#d9d2c1", metal1: "#e6cf93", metal2: "#8a6a22", stone: "#1a1917", accent: "#121110" },
-  pearl: { bg1: "#fbf9f4", bg2: "#ebe4d4", metal1: "#dcc07a", metal2: "#9c7a2b", stone: "#fffefb", accent: "#7a7266" },
+  gold: { bg1: "#faf5ec", bg2: "#ebdccb", metal1: "#e4d092", metal2: "#a87f2a", stone: "#fffef8", accent: "#141211" },
+  rose: { bg1: "#fcf4f0", bg2: "#f4ded5", metal1: "#eed0c5", metal2: "#b87563", stone: "#fff8f6", accent: "#2a1c1e" },
+  onyx: { bg1: "#faf5f0", bg2: "#ebdccb", metal1: "#e4d092", metal2: "#85631c", stone: "#1e1b19", accent: "#141211" },
+  pearl: { bg1: "#fdf8f5", bg2: "#f0dfd5", metal1: "#dbc17e", metal2: "#9e7d30", stone: "#fffdfa", accent: "#6e6458" },
 };
 
 /**

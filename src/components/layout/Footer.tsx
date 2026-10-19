@@ -4,16 +4,14 @@ import { Mail, Phone } from "lucide-react";
 import { Instagram } from "@/components/ui/InstagramIcon";
 import { BRAND } from "@/config/brand";
 import { COLLECTIONS } from "@/data/catalog";
-import { Newsletter } from "@/components/ui/Newsletter";
 
 export function Footer() {
   return (
-    <footer className="mt-24 bg-ink text-ivory/80">
-      <Newsletter />
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 md:grid-cols-4 md:px-8">
+    <footer className="mt-0 bg-[#0f0e0e] text-ivory/80">
+      <div className="mx-auto grid max-w-7xl gap-12 px-5 py-16 md:grid-cols-4 md:px-10">
         <div className="md:col-span-1">
-          <Image src="/logo.png" alt="Jewels by Richa" width={88} height={88} className="mb-4 h-[88px] w-[88px] rounded-full" />
-          <p className="text-sm leading-relaxed text-ivory/60">{BRAND.positioning}</p>
+          <Image src="/logo.png" alt="Jewels by Richa" width={88} height={88} className="mb-4 h-[78px] w-[78px] rounded-full" />
+          <p className="text-[13px] leading-relaxed text-ivory/55">{BRAND.positioning}</p>
           <a
             href={`https://instagram.com/${BRAND.social.instagram}`}
             target="_blank"
@@ -25,40 +23,40 @@ export function Footer() {
         </div>
 
         <div>
-          <h4 className="eyebrow mb-4">Shop</h4>
-          <ul className="space-y-2 text-sm">
-            <li><Link href="/shop" className="hover:text-gold-light">All jewellery</Link></li>
+          <h4 className="eyebrow !text-gold-light mb-4">Shop</h4>
+          <ul className="space-y-2.5 text-sm">
+            <li><Link href="/shop" className="text-ivory/70 transition-colors hover:text-gold-light">All jewellery</Link></li>
             {COLLECTIONS.map((c) => (
-              <li key={c.id}><Link href={`/collections/${c.slug}`} className="hover:text-gold-light">{c.name}</Link></li>
+              <li key={c.id}><Link href={`/collections/${c.slug}`} className="text-ivory/70 transition-colors hover:text-gold-light">{c.name}</Link></li>
             ))}
-            <li><Link href="/wishlist" className="hover:text-gold-light">Wishlist</Link></li>
+            <li><Link href="/wishlist" className="text-ivory/70 transition-colors hover:text-gold-light">Wishlist</Link></li>
           </ul>
         </div>
 
         <div>
-          <h4 className="eyebrow mb-4">Help</h4>
-          <ul className="space-y-2 text-sm">
-            <li><Link href="/faq" className="hover:text-gold-light">FAQ</Link></li>
-            <li><Link href="/care" className="hover:text-gold-light">Jewellery care</Link></li>
-            <li><Link href="/shipping-returns" className="hover:text-gold-light">Shipping &amp; returns</Link></li>
-            <li><Link href="/account/orders" className="hover:text-gold-light">Track my order</Link></li>
-            <li><Link href="/contact" className="hover:text-gold-light">Contact us</Link></li>
+          <h4 className="eyebrow !text-gold-light mb-4">Help</h4>
+          <ul className="space-y-2.5 text-sm">
+            <li><Link href="/faq" className="text-ivory/70 transition-colors hover:text-gold-light">FAQ</Link></li>
+            <li><Link href="/care" className="text-ivory/70 transition-colors hover:text-gold-light">Jewellery care</Link></li>
+            <li><Link href="/shipping-returns" className="text-ivory/70 transition-colors hover:text-gold-light">Shipping &amp; returns</Link></li>
+            <li><Link href="/account/orders" className="text-ivory/70 transition-colors hover:text-gold-light">Track my order</Link></li>
+            <li><Link href="/contact" className="text-ivory/70 transition-colors hover:text-gold-light">Contact us</Link></li>
           </ul>
         </div>
 
         <div>
-          <h4 className="eyebrow mb-4">Get in touch</h4>
+          <h4 className="eyebrow !text-gold-light mb-4">Get in touch</h4>
           <ul className="space-y-3 text-sm">
-            <li className="flex items-center gap-2"><Mail className="h-4 w-4 text-gold" /> {BRAND.contact.email}</li>
-            <li className="flex items-center gap-2"><Phone className="h-4 w-4 text-gold" /> {BRAND.contact.phone}</li>
-            <li className="text-ivory/60">{BRAND.businessHours}</li>
+            <li className="flex items-center gap-2 text-ivory/80"><Mail className="h-4 w-4 text-gold-light" /> {BRAND.contact.email}</li>
+            <li className="flex items-center gap-2 text-ivory/80"><Phone className="h-4 w-4 text-gold-light" /> {BRAND.contact.phone}</li>
+            <li className="text-[13px] text-ivory/55">{BRAND.businessHours}</li>
           </ul>
         </div>
       </div>
-      <div className="border-t border-ivory/10">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-5 text-xs text-ivory/50 md:flex-row md:px-8">
+      <div className="border-t border-[#362923] bg-[#140e0c]">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-5 py-5 text-[11px] text-ivory/50 md:flex-row md:px-10">
           <span>© 2026 Jewels by Richa. All rights reserved.</span>
-          <span className="flex gap-5">
+          <span className="flex gap-6">
             <Link href="/privacy-policy" className="hover:text-gold-light">Privacy</Link>
             <Link href="/terms" className="hover:text-gold-light">Terms</Link>
             <Link href="/shipping-returns" className="hover:text-gold-light">Refunds</Link>

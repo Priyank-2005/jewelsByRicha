@@ -18,9 +18,17 @@ const PRICE_BANDS = [
   { id: "o1500", label: "Above ₹1,500", min: 1500, max: Infinity },
 ];
 
-export function ShopView({ collectionSlug, categorySlug }: { collectionSlug?: string; categorySlug?: string }) {
+export function ShopView({
+  collectionSlug,
+  categorySlug,
+  presetFilter,
+}: {
+  collectionSlug?: string;
+  categorySlug?: string;
+  presetFilter?: "new-arrivals" | "bestsellers";
+}) {
   const { products, categories, collections } = useCatalog();
-  const [sort, setSort] = useState<Sort>("featured");
+  const [sort, setSort] = useState<Sort>(presetFilter === "new-arrivals" ? "newest" : "featured");
   const [band, setBand] = useState("all");
   const [inStock, setInStock] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
@@ -36,6 +44,7 @@ export function ShopView({ collectionSlug, categorySlug }: { collectionSlug?: st
         p.status === "ACTIVE" &&
         (!collection || p.collectionId === collection.id) &&
         (!category || p.categoryId === category.id) &&
+        (presetFilter !== "bestsellers" || p.isBestSeller || p.isFeatured || p.rating >= 4.8) &&
         p.price >= b.min &&
         p.price < b.max &&
         (!inStock || p.stock > 0),
@@ -47,11 +56,35 @@ export function ShopView({ collectionSlug, categorySlug }: { collectionSlug?: st
     else if (sort === "rating") out.sort((a, b) => b.rating - a.rating);
     else out.sort((a, b) => Number(b.isFeatured) - Number(a.isFeatured) || Number(b.isBestSeller) - Number(a.isBestSeller));
     return out;
-  }, [products, collection, category, band, inStock, sort]);
+  }, [products, collection, category, band, inStock, sort, presetFilter]);
 
-  const banner = (category && categoryCover(category, products)) || (collection?.slug === "festive" ? HERO.jhumka : collection?.slug === "anti-tarnish" ? HERO.necklace : HERO.hoops);
-  const title = category?.name ?? collection?.name ?? "All Jewellery";
-  const blurb = category?.description ?? collection?.description ?? "Every piece from Jewels by Richa — anti-tarnish, waterproof and made to be worn daily.";
+  const banner =
+    (category && categoryCover(category, products)) ||
+    (presetFilter === "new-arrivals"
+      ? HERO.hoops
+      : presetFilter === "bestsellers"
+      ? HERO.kada
+      : collection?.slug === "festive"
+      ? HERO.jhumka
+      : collection?.slug === "anti-tarnish"
+      ? HERO.necklace
+      : HERO.hoops);
+  const title =
+    category?.name ??
+    collection?.name ??
+    (presetFilter === "new-arrivals"
+      ? "New Arrivals"
+      : presetFilter === "bestsellers"
+      ? "Bestsellers"
+      : "All Jewellery");
+  const blurb =
+    category?.description ??
+    collection?.description ??
+    (presetFilter === "new-arrivals"
+      ? "Freshly dropped designs — 18K gold plated, anti-tarnish, waterproof and crafted to elevate every day."
+      : presetFilter === "bestsellers"
+      ? "Our most coveted, tried and loved jewellery pieces — adored by thousands."
+      : "Every piece from Jewels by Richa — anti-tarnish, waterproof and made to be worn daily.");
 
   return (
     <div>
@@ -64,7 +97,13 @@ export function ShopView({ collectionSlug, categorySlug }: { collectionSlug?: st
           <nav className="mb-4 text-xs uppercase tracking-[0.2em] text-ivory/70">
             <Link href="/" className="hover:text-gold-light">Home</Link>
             <span className="mx-2">/</span>
-            <Link href="/shop" className="hover:text-gold-light">Shop</Link>
+            {presetFilter === "new-arrivals" ? (
+              <span className="text-gold-light">New Arrivals</span>
+            ) : presetFilter === "bestsellers" ? (
+              <span className="text-gold-light">Bestsellers</span>
+            ) : (
+              <Link href="/shop" className="hover:text-gold-light">Shop</Link>
+            )}
             {collection && (
               <>
                 <span className="mx-2">/</span>

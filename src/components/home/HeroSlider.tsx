@@ -72,7 +72,7 @@ export function HeroSlider() {
       onMouseLeave={() => setPaused(false)}
       aria-roledescription="carousel"
     >
-      <div className="relative h-[calc(100svh-6.5rem)] min-h-[560px] md:h-[calc(100svh-7.5rem)] md:max-h-[780px] md:min-h-[600px]">
+      <div className="relative h-[calc(100svh-6.5rem)] min-h-[580px] md:h-[calc(100svh-7rem)] md:max-h-[860px] md:min-h-[640px]">
         {/* photo */}
         <div className="absolute inset-0 overflow-hidden md:left-[44%]">
           <AnimatePresence mode="sync">
@@ -89,12 +89,12 @@ export function HeroSlider() {
             </motion.div>
           </AnimatePresence>
           {/* mobile: darken bottom; desktop: fade into left panel */}
-          <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 via-35% to-ink/10 md:hidden" />
-          <div className="absolute inset-0 hidden bg-gradient-to-r from-ink via-ink/50 via-10% to-transparent to-50% md:block" />
+          <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 via-40% to-ink/5 md:hidden" />
+          <div className="absolute inset-0 hidden bg-gradient-to-r from-ink via-ink/40 via-12% to-transparent to-55% md:block" />
         </div>
 
         {/* text panel */}
-        <div className="pointer-events-none absolute inset-0 hidden bg-[radial-gradient(ellipse_at_20%_60%,rgba(201,162,75,0.16),transparent_60%)] md:block" />
+        <div className="pointer-events-none absolute inset-0 hidden bg-[radial-gradient(ellipse_at_18%_55%,rgba(196,154,60,0.12),transparent_55%)] md:block" />
         <div className="relative mx-auto flex h-full max-w-7xl items-end px-5 pb-24 md:items-center md:px-8 md:pb-0">
           <AnimatePresence mode="wait">
             <motion.div
@@ -106,8 +106,8 @@ export function HeroSlider() {
               className="max-w-[34rem]"
             >
               <p className="eyebrow !text-gold-mid">{s.eyebrow}</p>
-              <h1 className="mt-4 font-serif text-[2.7rem] font-light leading-[1.04] md:text-[3.9rem] lg:text-[5rem] [&_.font-script]:text-[1.18em]">{s.title}</h1>
-              <p className="mt-5 max-w-md text-[14.5px] leading-relaxed text-ivory/75 md:text-base">{s.text}</p>
+              <h1 className="mt-5 font-serif text-[2.6rem] font-extralight leading-[1.02] md:text-[3.8rem] lg:text-[4.8rem] [&_.font-script]:text-[1.2em]">{s.title}</h1>
+              <p className="mt-6 max-w-md text-[14px] leading-[1.8] text-ivory/65 md:text-[15px]">{s.text}</p>
               <div className="mt-7 flex flex-wrap gap-3">
                 <Link href={s.cta.href} className="btn-gold pointer-events-auto">
                   {s.cta.label} <ArrowRight className="h-4 w-4" />
@@ -125,7 +125,7 @@ export function HeroSlider() {
           <div className="flex items-center gap-2" role="tablist">
             {SLIDES.map((_, k) => (
               <button key={k} role="tab" aria-selected={k === i} aria-label={`Slide ${k + 1}`} onClick={() => go(k)} className="group py-3">
-                <span className={cn("block h-[2px] transition-all duration-500", k === i ? "w-12 bg-gold-mid" : "w-6 bg-ivory/40 group-hover:bg-ivory/70")} />
+                <span className={cn("block h-[1.5px] transition-all duration-700 ease-out", k === i ? "w-14 bg-gold-mid" : "w-5 bg-ivory/30 group-hover:bg-ivory/60")} />
               </button>
             ))}
           </div>

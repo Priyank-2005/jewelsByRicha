@@ -1,27 +1,56 @@
 @import "tailwindcss";
 
 @theme {
-  /* Jewels by Richa — Gold · Ivory · Black */
-  --color-ivory: #fbf8f1;
-  --color-cream: #f4ede0;
-  --color-beige: #e9dfcd;
-  --color-ink: #121110;
-  --color-ink-soft: #2b2926;
-  --color-wine: #2e1418;
-  --color-muted: #7a7266;
-  --color-gold: #b8913a;
-  --color-gold-mid: #c9a24b;
-  --color-gold-light: #e6cf93;
-  --color-gold-deep: #8a6a22;
-  --color-line: #e5dcc8;
+  /* Jewels by Richa — Dark: Black & Dark Brown/Beige | Light: Blush Pink & Little Gold */
 
-  --shadow-soft: 0 12px 40px -14px rgba(138, 106, 34, 0.25);
-  --shadow-lift: 0 22px 48px -16px rgba(18, 17, 16, 0.28);
+  /* DARK FAMILY: Black · Dark Brown · Dark Beige */
+  --color-dark-pure: #0f0e0e;          /* Pure crisp black */
+  --color-dark-brown: #201714;         /* Rich dark espresso brown */
+  --color-dark-brown-card: #281e1a;    /* Warm dark mocha card */
+  --color-dark-beige: #362923;         /* Deep bronze dark beige */
+  --color-dark-beige-mid: #4a3a32;     /* Medium dark beige */
+  --color-dark-border: rgba(196, 158, 73, 0.22); /* Hairline gold border */
+
+  /* LIGHT FAMILY: Ivory Goldish Pink */
+  --color-blush-light: #fdf8f4;        /* Luminous porcelain ivory pink */
+  --color-blush: #faf2eb;              /* Signature ivory goldish pink */
+  --color-blush-soft: #f6e9e0;         /* Soft warm ivory goldish pink */
+  --color-blush-card: #ffffff;         /* Crisp card background */
+  --color-blush-border: #ebd8cc;       /* Delicate goldish-pink outline */
+
+  /* LITTLE GOLD: Champagne & Fine Gold */
+  --color-gold: #c49e49;
+  --color-gold-mid: #d4ae58;
+  --color-gold-light: #e8cca0;
+  --color-gold-deep: #947228;
+  --color-line: #ebd8cc;
+
+  /* Aliases for compatibility */
+  --color-ivory: #faf3ec;              /* Ivory Goldish Pink */
+  --color-cream: #f6e9e0;
+  --color-beige: #362923;
+  --color-obsidian: #201714;
+  --color-obsidian-card: #281e1a;
+  --color-obsidian-border: rgba(196, 158, 73, 0.22);
+  --color-alabaster: #fdf8f4;
+  --color-alabaster-soft: #faf2eb;
+  --color-alabaster-card: #ffffff;
+  --color-alabaster-border: #ebd8cc;
+
+  /* Typography */
+  --color-ink: #141110;
+  --color-ink-soft: #2b2320;
+  --color-muted: #786862;
+
+  --shadow-soft: 0 8px 32px -10px rgba(196, 158, 73, 0.22);
+  --shadow-lift: 0 20px 48px -12px rgba(15, 14, 14, 0.28);
+  --shadow-glow: 0 0 35px -5px rgba(212, 174, 88, 0.25);
+  --shadow-card: 0 2px 14px -4px rgba(32, 23, 20, 0.06);
 }
 
 @theme inline {
-  --font-serif: var(--font-cormorant), "Times New Roman", serif;
-  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-serif: var(--font-cormorant), "Cormorant Garamond", "Times New Roman", serif;
+  --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
   --font-script: var(--font-great-vibes), "Brush Script MT", cursive;
 }
 
@@ -29,12 +58,15 @@
   html {
     scroll-behavior: smooth;
     background: var(--color-ivory);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   body {
     background: var(--color-ivory);
     color: var(--color-ink);
     font-size: 15px;
-    line-height: 1.7;
+    line-height: 1.72;
+    letter-spacing: 0.005em;
   }
   .font-serif {
     font-variant-numeric: lining-nums;
@@ -47,45 +79,76 @@
     background: var(--color-gold-light);
     color: var(--color-ink);
   }
+  /* Smooth image rendering */
+  img {
+    image-rendering: auto;
+  }
 }
 
 @layer components {
   .btn {
-    @apply inline-flex items-center justify-center gap-2 px-8 py-3 text-xs font-medium uppercase tracking-[0.22em] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center gap-2 px-8 py-3.5 text-[10.5px] font-semibold uppercase tracking-[0.24em] transition-all duration-500 disabled:opacity-50 disabled:cursor-not-allowed;
+    letter-spacing: 0.24em;
   }
   .btn-dark {
-    @apply inline-flex items-center justify-center gap-2 px-8 py-3 text-xs font-medium uppercase tracking-[0.22em] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed bg-ink text-ivory hover:bg-gold-deep;
+    @apply inline-flex items-center justify-center gap-2 px-8 py-3.5 text-[10.5px] font-semibold uppercase tracking-[0.24em] transition-all duration-500 disabled:opacity-50 disabled:cursor-not-allowed bg-ink text-ivory;
+    letter-spacing: 0.24em;
   }
-  .btn-gold {
-    @apply inline-flex items-center justify-center gap-2 px-8 py-3 text-xs font-medium uppercase tracking-[0.22em] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed text-ink;
-    background: linear-gradient(135deg, var(--color-gold-light), var(--color-gold-mid) 55%, var(--color-gold));
-  }
-  .btn-gold:hover {
-    filter: brightness(1.07);
+  .btn-dark:hover {
+    background: var(--color-gold-deep);
     box-shadow: var(--shadow-soft);
   }
+  .btn-gold {
+    @apply inline-flex items-center justify-center gap-2 px-8 py-3.5 text-[10.5px] font-semibold uppercase tracking-[0.24em] transition-all duration-500 disabled:opacity-50 disabled:cursor-not-allowed text-ink;
+    background: linear-gradient(145deg, var(--color-gold-light), var(--color-gold-mid) 50%, var(--color-gold) 100%);
+    box-shadow: 0 2px 16px -4px rgba(176, 137, 48, 0.35);
+    letter-spacing: 0.24em;
+  }
+  .btn-gold:hover {
+    filter: brightness(1.06) saturate(1.08);
+    box-shadow: 0 4px 24px -4px rgba(176, 137, 48, 0.45);
+    transform: translateY(-1px);
+  }
   .btn-outline {
-    @apply inline-flex items-center justify-center gap-2 px-8 py-3 text-xs font-medium uppercase tracking-[0.22em] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed border border-ink text-ink hover:bg-ink hover:text-ivory;
+    @apply inline-flex items-center justify-center gap-2 px-8 py-3.5 text-[10.5px] font-semibold uppercase tracking-[0.24em] transition-all duration-500 disabled:opacity-50 disabled:cursor-not-allowed border text-ink;
+    border-color: var(--color-ink);
+    letter-spacing: 0.24em;
+  }
+  .btn-outline:hover {
+    background: var(--color-ink);
+    color: var(--color-ivory);
+    box-shadow: var(--shadow-soft);
   }
   .eyebrow {
-    @apply text-[11px] font-medium uppercase tracking-[0.32em] text-gold;
+    @apply text-[10px] font-semibold uppercase text-gold;
+    letter-spacing: 0.35em;
   }
   .gold-rule {
     height: 1px;
     background: linear-gradient(90deg, transparent, var(--color-gold-mid), transparent);
   }
   .input {
-    @apply w-full border border-line bg-white px-4 py-3 text-sm text-ink outline-none transition-colors placeholder:text-muted/70 focus:border-gold;
+    @apply w-full border border-line bg-white px-4 py-3.5 text-sm text-ink outline-none transition-all placeholder:text-muted/60;
+  }
+  .input:focus {
+    border-color: var(--color-gold);
+    box-shadow: 0 0 0 3px rgba(176, 137, 48, 0.08);
   }
   .label {
-    @apply mb-1.5 block text-[11px] font-medium uppercase tracking-[0.18em] text-muted;
+    @apply mb-1.5 block text-[10px] font-semibold uppercase text-muted;
+    letter-spacing: 0.2em;
   }
   /* Admin */
   .a-card {
-    @apply rounded-xl border border-line bg-white shadow-[0_1px_2px_rgba(18,17,16,0.04)];
+    @apply rounded-xl border border-line bg-white;
+    box-shadow: var(--shadow-card);
   }
   .a-input {
-    @apply w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink outline-none transition-colors placeholder:text-muted/70 focus:border-gold focus:ring-2 focus:ring-gold/15;
+    @apply w-full rounded-lg border border-line bg-white px-3 py-2.5 text-sm text-ink outline-none transition-all placeholder:text-muted/60;
+  }
+  .a-input:focus {
+    border-color: var(--color-gold);
+    box-shadow: 0 0 0 3px rgba(176, 137, 48, 0.1);
   }
   .a-btn {
     @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50;
@@ -97,7 +160,8 @@
     @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50 border border-line bg-white text-ink hover:bg-cream;
   }
   .a-th {
-    @apply px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-muted;
+    @apply px-4 py-3 text-left text-[10px] font-semibold uppercase text-muted;
+    letter-spacing: 0.18em;
   }
   .a-td {
     @apply px-4 py-3 text-sm;
@@ -135,11 +199,28 @@
   }
 }
 
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 ::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-gold-light);
+  background: var(--color-beige);
   border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold-light);
 }

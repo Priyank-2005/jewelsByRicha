@@ -3,80 +3,55 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
-import { ChevronDown, Heart, Menu, Search, ShoppingBag, User, X } from "lucide-react";
+import { Heart, Menu, Search, ShoppingBag, User, X } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { useAuth } from "@/context/AuthContext";
-import { useCatalog } from "@/context/CatalogContext";
-import { HERO } from "@/data/images";
 import { SearchOverlay } from "./SearchOverlay";
 
 export function Navbar() {
   const { cartCount, setIsDrawerOpen } = useCart();
   const { ids } = useWishlist();
   const { user } = useAuth();
-  const { collections, categories } = useCatalog();
   const [mobile, setMobile] = useState(false);
   const [search, setSearch] = useState(false);
-  const [open, setOpen] = useState<string | null>(null);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-line bg-ivory/90 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-7xl items-center md:h-[76px] justify-between px-4 md:px-8">
-        {/* left */}
+    <header className="sticky top-0 z-40 border-b border-line/70 bg-ivory/95 backdrop-blur-xl backdrop-saturate-150">
+      <div className="mx-auto flex h-[60px] max-w-7xl items-center md:h-[82px] justify-between px-5 md:px-10">
+        {/* left: clean direct navigation */}
         <div className="flex flex-1 items-center gap-4">
           <button className="md:hidden" onClick={() => setMobile(true)} aria-label="Open menu">
             <Menu className="h-5 w-5" />
           </button>
-          <nav className="hidden items-center gap-6 whitespace-nowrap lg:gap-8 md:flex">
-            <Link href="/categories" className="text-[11px] font-medium uppercase tracking-[0.18em] hover:text-gold-deep">
-              Categories
+          <nav className="hidden items-center gap-7 whitespace-nowrap lg:gap-9 md:flex">
+            <Link
+              href="/new-arrivals"
+              className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-ink/80 transition-colors duration-300 hover:text-gold-deep"
+            >
+              New Arrivals
             </Link>
-            {collections.map((col) => (
-              <div key={col.id} className="group relative" onMouseEnter={() => setOpen(col.id)} onMouseLeave={() => setOpen(null)}>
-                <Link
-                  href={`/collections/${col.slug}`}
-                  className="flex items-center gap-1 py-6 text-[11px] font-medium uppercase tracking-[0.18em] hover:text-gold-deep"
-                >
-                  {col.name} <ChevronDown className="h-3 w-3" />
-                </Link>
-                {open === col.id && (
-                  <div className="absolute left-0 top-full flex w-[620px] border border-line bg-ivory shadow-lift">
-                   <div className="flex-1 p-6">
-                    <div className="grid grid-cols-2 gap-x-6 gap-y-1">
-                      {categories
-                        .filter((c) => c.collectionId === col.id && c.active)
-                        .sort((a, b) => a.sortOrder - b.sortOrder)
-                        .map((c) => (
-                          <Link
-                            key={c.id}
-                            href={`/collections/${col.slug}/${c.slug}`}
-                            onClick={() => setOpen(null)}
-                            className="py-1.5 text-sm text-ink-soft hover:text-gold-deep"
-                          >
-                            {c.name}
-                          </Link>
-                        ))}
-                    </div>
-                    <Link href={`/collections/${col.slug}`} className="mt-3 inline-block border-t border-line pt-3 text-xs uppercase tracking-[0.2em] text-gold-deep">
-                      View all →
-                    </Link>
-                   </div>
-                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                   <img src={col.slug === "festive" ? HERO.jhumka : HERO.necklace} alt="" className="hidden h-auto w-56 object-cover lg:block" />
-                  </div>
-                )}
-              </div>
-            ))}
+            <Link
+              href="/bestsellers"
+              className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-ink/80 transition-colors duration-300 hover:text-gold-deep"
+            >
+              Bestsellers
+            </Link>
+            <Link
+              href="/collections"
+              className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-ink/80 transition-colors duration-300 hover:text-gold-deep"
+            >
+              Our Collection
+            </Link>
           </nav>
         </div>
 
         {/* logo */}
         <Link href="/" className="flex items-center gap-2.5" aria-label="Jewels by Richa — home">
-          <Image src="/logo.png" alt="Jewels by Richa" width={52} height={52} className="h-11 w-11 rounded-full md:h-[52px] md:w-[52px]" priority />
+          <Image src="/logo.png" alt="Jewels by Richa" width={52} height={52} className="h-12 w-12 rounded-full md:h-[54px] md:w-[54px]" priority />
           <span className="hidden leading-none sm:block">
-            <span className="block font-serif text-xl tracking-[0.3em]">JEWELS</span>
-            <span className="-mt-0.5 block font-script text-lg text-gold-deep">by Richa</span>
+            <span className="block font-serif text-[1.3rem] font-light tracking-[0.35em]">JEWELS</span>
+            <span className="-mt-0.5 block font-script text-[1.05rem] text-gold-deep">by Richa</span>
           </span>
         </Link>
 
@@ -112,25 +87,21 @@ export function Navbar() {
                 <X className="h-5 w-5" />
               </button>
             </div>
-            <Link href="/shop" onClick={() => setMobile(false)} className="border-b border-line py-3 text-sm uppercase tracking-[0.18em]">
-              Shop all
+            <Link href="/new-arrivals" onClick={() => setMobile(false)} className="border-b border-line py-3 text-sm font-medium uppercase tracking-[0.18em]">
+              New Arrivals
             </Link>
-            {collections.map((col) => (
-              <div key={col.id} className="border-b border-line py-3">
-                <Link href={`/collections/${col.slug}`} onClick={() => setMobile(false)} className="text-sm font-medium uppercase tracking-[0.18em]">
-                  {col.name}
-                </Link>
-                <div className="mt-2 grid grid-cols-2 gap-x-3">
-                  {categories
-                    .filter((c) => c.collectionId === col.id && c.active)
-                    .map((c) => (
-                      <Link key={c.id} href={`/collections/${col.slug}/${c.slug}`} onClick={() => setMobile(false)} className="py-1.5 text-sm text-muted">
-                        {c.name}
-                      </Link>
-                    ))}
-                </div>
-              </div>
-            ))}
+            <Link href="/bestsellers" onClick={() => setMobile(false)} className="border-b border-line py-3 text-sm font-medium uppercase tracking-[0.18em]">
+              Bestsellers
+            </Link>
+            <Link href="/collections" onClick={() => setMobile(false)} className="border-b border-line py-3 text-sm font-medium uppercase tracking-[0.18em]">
+              Our Collection
+            </Link>
+            <Link href="/categories" onClick={() => setMobile(false)} className="border-b border-line py-3 text-sm uppercase tracking-[0.18em]">
+              All Categories
+            </Link>
+            <Link href="/shop" onClick={() => setMobile(false)} className="border-b border-line py-3 text-sm uppercase tracking-[0.18em]">
+              Shop all jewellery
+            </Link>
             {[
               ["Wishlist", "/wishlist"],
               [user ? "My account" : "Login / Register", user ? "/account" : "/login"],

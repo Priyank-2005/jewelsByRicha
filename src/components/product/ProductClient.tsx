@@ -116,27 +116,27 @@ export function ProductClient({ slug }: { slug: string }) {
           </div>
 
           <div className="mt-5 flex flex-wrap items-baseline gap-3">
-            <span className="text-3xl font-medium">{formatPrice(product.price)}</span>
+            <span className="text-3xl font-medium tracking-tight">{formatPrice(product.price)}</span>
             {product.originalPrice && (
               <>
-                <span className="text-lg text-muted line-through">{formatPrice(product.originalPrice)}</span>
-                <span className="rounded-sm bg-gold-light/50 px-2 py-0.5 text-xs font-semibold text-gold-deep">{off}% OFF</span>
+                <span className="text-base text-muted/60 line-through">{formatPrice(product.originalPrice)}</span>
+                <span className="bg-blush-rose/50 border border-blush-border px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-gold-deep">{off}% OFF</span>
               </>
             )}
           </div>
-          <p className="mt-1 text-xs text-muted">Inclusive of all taxes · Free shipping above ₹999</p>
+          <p className="mt-1 text-xs text-muted/80">Inclusive of all taxes · Free shipping above ₹999</p>
 
-          <p className="mt-6 text-ink-soft">{product.shortDescription}</p>
+          <p className="mt-6 leading-relaxed text-ink-soft/90">{product.shortDescription}</p>
 
           <ul className="mt-5 flex flex-wrap gap-2">
             {product.features.map((f) => (
-              <li key={f} className="border border-gold-light bg-cream px-3 py-1 text-xs text-gold-deep">{f}</li>
+              <li key={f} className="border border-blush-border/70 bg-blush-soft px-3 py-1 text-[11px] font-medium tracking-wide text-ink-soft">{f}</li>
             ))}
           </ul>
 
           <div className="mt-8 flex flex-wrap items-center gap-4">
             <QuantitySelector value={qty} onChange={(n) => setQty(Math.max(1, n))} max={Math.max(product.stock, 1)} />
-            <span className={cn("text-xs", soldOut ? "text-red-700" : product.stock <= 5 ? "text-gold-deep" : "text-muted")}>
+            <span className={cn("text-xs", soldOut ? "text-red-700" : product.stock <= 5 ? "text-gold-deep" : "text-muted/80")}>
               {soldOut ? "Currently sold out" : product.stock <= 5 ? `Only ${product.stock} left` : "In stock"}
             </span>
           </div>
@@ -145,12 +145,12 @@ export function ProductClient({ slug }: { slug: string }) {
           <div className="mt-6 hidden gap-3 md:flex">
             <button disabled={soldOut} onClick={() => addToCart(product, qty)} className="btn-dark flex-1">Add to bag</button>
             <button disabled={soldOut} onClick={() => { addToCart(product, qty); router.push("/checkout"); }} className="btn-gold flex-1">Buy now</button>
-            <button onClick={() => toggle(product.id, product.name)} aria-label="Wishlist" className="flex h-[46px] w-[46px] items-center justify-center border border-line hover:border-gold">
+            <button onClick={() => toggle(product.id, product.name)} aria-label="Wishlist" className="flex h-[46px] w-[46px] items-center justify-center border border-line/80 transition-colors hover:border-gold">
               <Heart className={cn("h-5 w-5", has(product.id) && "fill-gold text-gold")} />
             </button>
           </div>
 
-          <div className="mt-8 grid grid-cols-4 gap-2 border-y border-line py-5 text-[11px]">
+          <div className="mt-8 grid grid-cols-4 gap-2 border-y border-line/70 py-5 text-[10.5px]">
             {[
               [ShieldCheck, "Anti-tarnish"],
               [Droplets, "Waterproof"],
@@ -160,7 +160,7 @@ export function ProductClient({ slug }: { slug: string }) {
               const I = Icon as typeof ShieldCheck;
               return (
                 <div key={label as string} className="flex flex-col items-center gap-1.5 text-center leading-tight">
-                  <I className="h-5 w-5 text-gold" strokeWidth={1.4} />
+                  <I className="h-5 w-5 text-gold/85" strokeWidth={1.2} />
                   {label as string}
                 </div>
               );
@@ -169,12 +169,12 @@ export function ProductClient({ slug }: { slug: string }) {
 
           <div className="mt-2">
             {sections.map(([t, body]) => (
-              <div key={t} className="border-b border-line">
-                <button onClick={() => setOpen(open === t ? null : t)} className="flex w-full items-center justify-between py-4 text-left text-[13px] font-medium uppercase tracking-[0.15em]">
+              <div key={t} className="border-b border-line/70">
+                <button onClick={() => setOpen(open === t ? null : t)} className="flex w-full items-center justify-between py-4 text-left text-[11.5px] font-semibold uppercase tracking-[0.2em]">
                   {t}
-                  <ChevronDown className={cn("h-4 w-4 transition-transform", open === t && "rotate-180")} />
+                  <ChevronDown className={cn("h-4 w-4 transition-transform duration-300", open === t && "rotate-180")} />
                 </button>
-                {open === t && <p className="pb-5 text-sm leading-relaxed text-ink-soft">{body}</p>}
+                {open === t && <p className="pb-5 text-sm leading-relaxed text-ink-soft/85">{body}</p>}
               </div>
             ))}
           </div>
