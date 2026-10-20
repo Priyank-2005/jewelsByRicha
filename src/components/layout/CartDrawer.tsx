@@ -3,15 +3,16 @@
 import Link from "next/link";
 import { ShoppingBag, X } from "lucide-react";
 import { useCart } from "@/context/CartContext";
-import { BRAND } from "@/config/brand";
+import { useCatalog } from "@/context/CatalogContext";
 import { formatPrice } from "@/lib/utils";
 import { ProductVisual } from "@/components/ui/ProductVisual";
 import { QuantitySelector } from "@/components/ui/QuantitySelector";
 
 export function CartDrawer() {
+  const { settings } = useCatalog();
   const { items, isDrawerOpen, setIsDrawerOpen, subtotal, removeFromCart, updateQuantity } = useCart();
   const close = () => setIsDrawerOpen(false);
-  const remaining = Math.max(BRAND.freeShippingThreshold - subtotal, 0);
+  const remaining = Math.max(settings.freeShippingThreshold - subtotal, 0);
 
   return (
     <div className={`fixed inset-0 z-[60] ${isDrawerOpen ? "" : "pointer-events-none"}`} aria-hidden={!isDrawerOpen}>
@@ -43,7 +44,7 @@ export function CartDrawer() {
                 <>You&apos;ve unlocked <b>free shipping</b> ✦</>
               )}
               <div className="mt-2.5 h-1 bg-blush-border/60">
-                <div className="h-full bg-gold transition-all duration-500" style={{ width: `${Math.min((subtotal / BRAND.freeShippingThreshold) * 100, 100)}%` }} />
+                <div className="h-full bg-gold transition-all duration-500" style={{ width: `${Math.min((subtotal / settings.freeShippingThreshold) * 100, 100)}%` }} />
               </div>
             </div>
             <ul className="flex-1 divide-y divide-line/60 overflow-y-auto px-6">

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";
-import { COLLECTIONS } from "@/data/catalog";
 import { HERO } from "@/data/images";
 
 export const metadata: Metadata = {
@@ -25,7 +24,7 @@ export default function CollectionsPage() {
             Our <span className="font-script text-gold-mid">Collections</span>
           </h1>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-ivory/70 md:text-base">
-            From heritage bridal &amp; festive treasures to waterproof everyday 18K gold-plated essentials.
+            From heritage kadas &amp; festive treasures to waterproof everyday 18K gold-plated essentials.
           </p>
         </div>
       </section>
@@ -37,7 +36,7 @@ export default function CollectionsPage() {
             {
               slug: "festive",
               name: "Festive Collection",
-              tagline: "Diwali, weddings & royal celebration",
+              tagline: "Diwali, festivals & celebrations",
               desc: "Kashmiri earrings, heritage kadas, moissanite sparkle, choker sets and royal jhumkas handpicked to elevate every celebratory moment.",
               img: HERO.jhumka,
               cta: "Shop Festive Collection",

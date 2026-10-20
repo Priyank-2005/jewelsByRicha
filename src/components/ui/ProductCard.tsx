@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Heart, Plus, ShoppingBag, Star } from "lucide-react";
-import type { Product } from "@/data/products";
+import type { Product } from "@/types/shop";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { useCatalog } from "@/context/CatalogContext";

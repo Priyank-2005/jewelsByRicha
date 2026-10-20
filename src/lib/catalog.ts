@@ -1,5 +1,5 @@
-import type { Category } from "@/data/catalog";
-import type { Product } from "@/data/products";
+import type { Category } from "@/types/shop";
+import type { Product } from "@/types/shop";
 
 /** Cover photo for a category tile = the first photo of its first live product. */
 export function categoryCover(cat: Category, products: Product[]) {

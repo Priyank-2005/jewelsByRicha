@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useMemo } from "react";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { IndianRupee, Package, ShoppingCart, Users, AlertTriangle } from "lucide-react";
-import { useCatalog } from "@/context/CatalogContext";
+import { useAdmin } from "@/context/AdminContext";
 import { PageHeader, StatCard } from "@/components/admin/ui";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { formatDate, formatPrice } from "@/lib/utils";
@@ -12,7 +12,7 @@ import { formatDate, formatPrice } from "@/lib/utils";
 const TODAY = new Date("2026-10-18T12:00:00+05:30");
 
 export default function Dashboard() {
-  const { orders, products, customers, categories } = useCatalog();
+  const { orders, products, customers, categories } = useAdmin();
 
   const valid = orders.filter((o) => o.status !== "CANCELLED");
   const revenue = valid.reduce((s, o) => s + o.total, 0);

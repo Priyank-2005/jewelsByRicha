@@ -1,9 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { use } from "react";
+import { use, useState } from "react";
 import { Check } from "lucide-react";
-import { useCatalog } from "@/context/CatalogContext";
+import { useMyOrders } from "@/lib/client/hooks";
+import { api } from "@/lib/client/api";
+import { payForOrder } from "@/lib/client/pay";
+import { useToast } from "@/context/ToastContext";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { cn, formatDate, formatPrice } from "@/lib/utils";
 
@@ -11,7 +14,11 @@ const STEPS = ["PENDING", "CONFIRMED", "SHIPPED", "DELIVERED"] as const;
 
 export default function OrderDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const { orders } = useCatalog();
+  const { orders, reload } = useMyOrders();
+  const { showToast } = useToast();
+  const [busy, setBusy] = useState(false);
+
+  if (!orders) return <p className="text-muted">Loading…</p>;
   const o = orders.find((x) => x.id === id);
   if (!o)
     return (
@@ -20,11 +27,39 @@ export default function OrderDetail({ params }: { params: Promise<{ id: string }
       </p>
     );
   const idx = STEPS.indexOf(o.status as (typeof STEPS)[number]);
+  const canCancel = o.status === "PENDING" || (o.status === "CONFIRMED" && o.paymentMethod === "COD");
+  const needsPayment = o.paymentMethod !== "COD" && o.paymentStatus !== "PAID" && o.status !== "CANCELLED";
+
+  const cancel = async () => {
+    if (!confirm("Cancel this order?")) return;
+    setBusy(true);
+    try {
+      await api(`/api/account/orders/${encodeURIComponent(o.id)}/cancel`, { method: "POST" });
+      showToast("Order cancelled");
+      reload();
+    } catch (e) {
+      showToast(e instanceof Error ? e.message : "Could not cancel the order");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const payNow = async () => {
+    setBusy(true);
+    try {
+      if (await payForOrder(o.id)) showToast("Payment received — thank you!");
+      reload();
+    } catch (e) {
+      showToast(e instanceof Error ? e.message : "Payment could not be completed");
+    } finally {
+      setBusy(false);
+    }
+  };
 
   return (
     <div>
       <Link href="/account/orders" className="text-xs uppercase tracking-[0.2em] text-muted hover:text-ink">← All orders</Link>
-      <div className="mt-3 flex items-center gap-3">
+      <div className="mt-3 flex flex-wrap items-center gap-3">
         <h2 className="font-serif text-3xl">{o.id}</h2>
         <StatusBadge status={o.status} />
       </div>
@@ -44,11 +79,17 @@ export default function OrderDetail({ params }: { params: Promise<{ id: string }
       )}
       {o.trackingNumber && <p className="mb-6 text-sm">Tracking number: <b>{o.trackingNumber}</b></p>}
 
+      {needsPayment && (
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 border border-gold-light bg-cream p-4 text-sm">
+          <span>Payment for this order is pending.</span>
+          <button disabled={busy} onClick={payNow} className="btn-gold !py-2.5">Pay {formatPrice(o.total)}</button>
+        </div>
+      )}
+
       <div className="border border-line bg-white">
-        {o.items.map((i) => (
-          <div key={i.productId} className="flex justify-between border-b border-line p-4 text-sm last:border-0">
-            <span>{i.name} × {i.quantity}</span>
-            <span>{formatPrice(i.price * i.quantity)}</span>
+        {o.items.map((i, k) => (
+          <div key={`${i.productId}-${k}`} className="flex justify-between border-b border-line p-4 text-sm last:border-0">
+            <span>{i.name} × {i.quantity}</span><span>{formatPrice(i.price * i.quantity)}</span>
           </div>
         ))}
         <div className="space-y-1 bg-cream p-4 text-sm">
@@ -62,6 +103,7 @@ export default function OrderDetail({ params }: { params: Promise<{ id: string }
         <div><div className="label">Delivery address</div>{o.customerName}<br />{o.address}</div>
         <div><div className="label">Payment</div>{o.paymentMethod} · <StatusBadge status={o.paymentStatus} /></div>
       </div>
+      {canCancel && <button disabled={busy} onClick={cancel} className="btn-outline mt-8">Cancel order</button>}
     </div>
   );
 }

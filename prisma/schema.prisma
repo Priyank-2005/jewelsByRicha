@@ -1,6 +1,8 @@
-// Jewels by Richa — PLANNED database schema (not wired up yet).
-// Mirrors the Treasure Trove schema, plus a Collection level above Category.
-// To activate: `npm i prisma @prisma/client`, set DATABASE_URL, run `npx prisma migrate dev --name init`.
+// Jewels by Richa — database schema (PostgreSQL via Prisma).
+// Same design as Treasure Trove, plus a Collection level above Category.
+//   - prices are whole rupees (Int)
+//   - orders keep snapshots of names / prices / address so history survives product edits
+//   - stock lives on Product (no variants in V1)
 
 generator client {
   provider = "prisma-client-js"
@@ -8,7 +10,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("JBR_DATABASE_URL")
 }
 
 enum Role {
@@ -48,18 +50,18 @@ enum DiscountType {
 }
 
 model User {
-  id           String   @id @default(cuid())
+  id           String    @id @default(cuid())
   name         String
-  email        String   @unique
+  email        String    @unique
   phone        String?
   passwordHash String
-  role         Role     @default(CUSTOMER)
-  createdAt    DateTime @default(now())
+  role         Role      @default(CUSTOMER)
+  createdAt    DateTime  @default(now())
+  lastLoginAt  DateTime?
 
   addresses Address[]
   orders    Order[]
   wishlist  WishlistItem[]
-  reviews   Review[]
 }
 
 model Address {
@@ -78,7 +80,7 @@ model Address {
   @@index([userId])
 }
 
-// Top level of the catalogue: "Festive Collection", "Anti Tarnish"
+// Top of the catalogue: "Festive Collection", "Anti Tarnish"
 model Collection {
   id          String     @id @default(cuid())
   name        String
@@ -91,16 +93,18 @@ model Collection {
   products    Product[]
 }
 
-// "Heritage Bangle Kada", "Hoop Earrings", …
+// "Heritage Bangle Kada", "Hoop Earrings", ...
 model Category {
   id           String     @id @default(cuid())
   collectionId String
   name         String
   slug         String     @unique
-  description  String?
+  description  String     @default("")
+  artKind      String     @default("ring") // placeholder illustration style when a product has no photo
   imageUrl     String?
   sortOrder    Int        @default(0)
   active       Boolean    @default(true)
+  showOnHome   Boolean    @default(false) // shown in the homepage "Shop by category" row (max 8)
   collection   Collection @relation(fields: [collectionId], references: [id])
   products     Product[]
 
@@ -113,18 +117,21 @@ model Product {
   slug             String        @unique
   collectionId     String
   categoryId       String
-  price            Int // rupees (whole numbers), as in Treasure Trove
-  originalPrice    Int? // MRP, shows the discount
-  shortDescription String?
-  description      String
-  material         String?
-  careInstructions String?
+  price            Int
+  originalPrice    Int? // MRP, used to show the discount
+  shortDescription String        @default("")
+  description      String        @default("")
+  material         String        @default("")
+  careInstructions String        @default("")
   features         String[]
   stock            Int           @default(0)
   status           ProductStatus @default(ACTIVE)
+  badge            String?
   isFeatured       Boolean       @default(false)
   isBestSeller     Boolean       @default(false)
   isNew            Boolean       @default(false)
+  rating           Float         @default(0)
+  reviewCount      Int           @default(0)
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
 
@@ -133,7 +140,6 @@ model Product {
   images     ProductImage[]
   orderItems OrderItem[]
   wishlist   WishlistItem[]
-  reviews    Review[]
 
   @@index([categoryId])
   @@index([collectionId])
@@ -143,8 +149,7 @@ model Product {
 model ProductImage {
   id        String  @id @default(cuid())
   productId String
-  url       String // Cloudinary URL
-  publicId  String? // Cloudinary id, for deletes
+  url       String
   sortOrder Int     @default(0)
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
@@ -152,32 +157,34 @@ model ProductImage {
 }
 
 model Order {
-  id             String        @id @default(cuid())
-  number         String        @unique // "JBR-1001"
-  userId         String? // null for guest checkout
-  // Snapshots — never FKs — so history survives edits
-  customerName   String
-  email          String
-  phone          String
-  shippingAddress Json
-  subtotal       Int
-  discount       Int           @default(0)
-  shipping       Int           @default(0)
-  codFee         Int           @default(0)
-  total          Int
-  couponCode     String?
-  paymentMethod  PaymentMethod
-  paymentStatus  PaymentStatus @default(PENDING)
-  status         OrderStatus   @default(PENDING)
-  trackingNumber String?
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  id              String        @id @default(cuid())
+  number          String        @unique // "JBR-1001"
+  userId          String? // null for guest checkout
+  customerName    String
+  email           String
+  phone           String
+  shippingAddress Json // { name, phone, line, city, state, pincode }
+  subtotal        Int
+  discount        Int           @default(0)
+  shipping        Int           @default(0)
+  codFee          Int           @default(0)
+  total           Int
+  couponCode      String?
+  paymentMethod   PaymentMethod
+  paymentStatus   PaymentStatus @default(PENDING)
+  status          OrderStatus   @default(PENDING)
+  trackingNumber  String?
+  stockRestored   Boolean       @default(false)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 
-  user     User?       @relation(fields: [userId], references: [id])
+  user     User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
   items    OrderItem[]
   payments Payment[]
+  coupon   CouponUsage?
 
   @@index([userId])
+  @@index([email])
   @@index([status])
   @@index([createdAt])
 }
@@ -186,8 +193,9 @@ model OrderItem {
   id        String  @id @default(cuid())
   orderId   String
   productId String?
-  name      String // snapshot
-  price     Int // snapshot
+  name      String // snapshots
+  image     String?
+  price     Int
   quantity  Int
   order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
@@ -203,32 +211,51 @@ model Payment {
   providerPaymentId String?       @unique
   amount            Int
   status            PaymentStatus @default(PENDING)
+  method            String?
   createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
   order             Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   @@index([orderId])
 }
 
+// Provider event ids, so a webhook delivered twice is only processed once
 model WebhookEvent {
-  id          String   @id // provider event id — makes webhook handling idempotent
+  id          String   @id
   type        String
   processedAt DateTime @default(now())
 }
 
 model Coupon {
-  id          String       @id @default(cuid())
-  code        String       @unique
-  description String?
-  type        DiscountType
-  value       Int
-  minOrder    Int          @default(0)
-  maxDiscount Int?
-  usageLimit  Int?
-  usedCount   Int          @default(0)
-  expiresAt   DateTime
-  active      Boolean      @default(true)
-  codAllowed  Boolean      @default(true)
-  createdAt   DateTime     @default(now())
+  id               String       @id @default(cuid())
+  code             String       @unique
+  description      String       @default("")
+  type             DiscountType
+  value            Int
+  minOrder         Int          @default(0)
+  maxDiscount      Int?
+  usageLimit       Int?
+  usedCount        Int          @default(0)
+  perCustomerLimit Int?
+  firstOrderOnly   Boolean      @default(false)
+  expiresAt        DateTime
+  active           Boolean      @default(true)
+  codAllowed       Boolean      @default(true)
+  createdAt        DateTime     @default(now())
+
+  usages CouponUsage[]
+}
+
+model CouponUsage {
+  id        String   @id @default(cuid())
+  couponId  String
+  orderId   String   @unique
+  email     String
+  createdAt DateTime @default(now())
+  coupon    Coupon   @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([couponId, email])
 }
 
 model WishlistItem {
@@ -241,26 +268,27 @@ model WishlistItem {
   @@id([userId, productId])
 }
 
-model Review {
+model ContactMessage {
   id        String   @id @default(cuid())
-  productId String
-  userId    String
-  rating    Int
-  comment   String?
-  approved  Boolean  @default(false)
+  name      String
+  email     String
+  message   String
   createdAt DateTime @default(now())
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([productId])
+  handled   Boolean  @default(false)
 }
 
-// Auth support (same approach as Treasure Trove)
+model Subscriber {
+  email     String   @id
+  createdAt DateTime @default(now())
+}
+
+// Short-lived OTP codes (registration, password reset). Stored hashed.
 model VerificationCode {
   key       String   @id // "<email>:<purpose>"
   codeHash  String
   attempts  Int      @default(0)
   expiresAt DateTime
+  data      Json?
 }
 
 model RateLimit {
@@ -269,7 +297,14 @@ model RateLimit {
   expireAt DateTime
 }
 
+// Editable store settings (shipping fees, free-shipping limit, contact details, ...)
 model SiteSettings {
   key   String @id
   value Json
+}
+
+// Atomic counters, e.g. order numbers
+model Counter {
+  key   String @id
+  value Int
 }

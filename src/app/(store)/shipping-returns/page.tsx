@@ -1,19 +1,22 @@
 import type { Metadata } from "next";
 import { PolicyLayout } from "@/components/ui/PolicyLayout";
-import { BRAND } from "@/config/brand";
+import { getSettings } from "@/lib/server/settings";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = { title: "Shipping & returns" };
 
-export default function ShippingReturns() {
+export default async function ShippingReturns() {
+  const s = await getSettings();
   return (
     <PolicyLayout eyebrow="Policies" title="Shipping & returns" intro="Placeholder policy copy — final wording to be provided by the client.">
       <section>
         <h2>Shipping</h2>
         <ul>
-          <li>Free shipping on orders above ₹{BRAND.freeShippingThreshold}; ₹{BRAND.shippingFee} flat rate below.</li>
+          <li>Free shipping on orders above ₹{s.freeShippingThreshold.toLocaleString("en-IN")}; ₹{s.shippingFee} flat rate below.</li>
           <li>Orders are dispatched within 1–2 business days.</li>
           <li>Delivery within 3–7 business days across India.</li>
-          <li>Cash on delivery has a ₹{BRAND.codFee} handling fee.</li>
+          <li>Cash on delivery has a ₹{s.codFee} handling fee.</li>
         </ul>
       </section>
       <section>

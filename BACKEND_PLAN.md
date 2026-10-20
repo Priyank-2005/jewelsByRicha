@@ -1,7 +1,7 @@
 # Jewels by Richa — Project Blueprint & Backend Plan
 
 > Same architecture as **Treasure Trove by Gurasim** (`D:\treasuretrove`) so we can reuse its proven pieces.
-> Status: **Phase 1 (complete UI-only frontend) is done.** Everything below Phase 1 is the plan.
+> Status: **Phases 1–9 are built** (storefront, admin, database, auth, payments, uploads). Remaining: go-live setup with the client's own accounts (Phase 10).
 
 ## 1. Brand & scope
 
@@ -33,20 +33,18 @@ Collection  (Festive Collection | Anti Tarnish)
 Storefront URLs: `/shop` · `/collections/[collection]` · `/collections/[collection]/[category]` · `/product/[slug]`.
 Collections are seeded (rarely change); categories are managed in **Admin → Categories**.
 
-## 4. What exists today (frontend, mock data)
+## 4. What exists today
 
-All state lives in `src/context/CatalogContext.tsx` (seed data + `localStorage`) — it is the **only** layer that
-needs to change when the backend arrives; pages consume it through `useCatalog()`.
+The frontend now runs on the real backend (no mock data). Routes: see `src/app`. API: see section 6. Notes on how it works:
 
-| Area | Routes |
-|---|---|
-| Storefront | `/`, `/shop`, `/collections/…`, `/product/[slug]`, `/cart`, `/checkout`, `/order-success`, `/wishlist`, `/about`, `/care`, `/faq`, `/contact`, `/shipping-returns`, `/privacy-policy`, `/terms` |
-| Customer account | `/login`, `/account`, `/account/orders`, `/account/orders/[id]`, `/account/addresses`, `/account/profile` |
-| Admin | `/admin/login`, `/admin`, `/admin/products` (+ `new`, `[id]`), `/admin/categories`, `/admin/orders` (+ `[id]`), `/admin/customers` (+ `[id]`), `/admin/coupons` |
-
-Dummy data: 57 products (3 per category), 10 customers, 14 orders, 4 coupons. Products use illustrated SVG
-placeholders (`ProductArt`) until real photos are uploaded — the `images[]` field already takes URLs.
-Admin → "Reset demo data" restores the seed. Demo admin login accepts any password.
+- **Catalogue** is read from PostgreSQL in the store layout (server-rendered, SEO-friendly); admin edits show on the next page load.
+- **Orders** are priced on the server from the database. The browser only sends product ids and quantities.
+  Stock is decremented and the coupon consumed inside one transaction; cancelling restores both. Unpaid online orders are auto-cancelled after 1 hour.
+- **Payments**: Razorpay checkout + signature check + Razorpay API check + webhook (idempotent). With no keys, a mock mode works in development only.
+- **Auth**: customers (email + password, OTP on register / reset) and admin use separate iron-session cookies; `proxy.ts` guards pages, and every admin route re-checks the role in the database.
+- **Guests** can check out; their orders attach to their account when they register or sign in with the same email.
+- **Images**: Cloudinary when configured, otherwise `public/uploads` (development only). Uploads are type-checked by file signature.
+- **Settings** (shipping fee, free-shipping limit, COD fee, contact details, homepage categories) are editable in the admin panel.
 
 ## 5. Database
 
@@ -89,15 +87,15 @@ Admin guarded by `src/proxy.ts` + per-route role checks. Security headers in `ne
 | Phase | Work | Status |
 |---|---|---|
 | 1 | Complete frontend + admin UI with mock data | ✅ Done |
-| 2 | Postgres + Prisma schema, migration, seed script (collections, categories, sample products) | Planned |
-| 3 | Data-access layer (`src/lib/dal/*`) — port from Treasure Trove | Planned |
-| 4 | Server auth: register/OTP/login/session, admin login | Planned |
-| 5 | Products + categories APIs, replace `CatalogContext` reads with fetch/server components | Planned |
-| 6 | Cart validation, coupons, checkout → order creation (transactional) | Planned |
-| 7 | Razorpay test mode + webhook | Planned |
-| 8 | Orders, customers, analytics admin APIs; emails | Planned |
-| 9 | Cloudinary uploads, real product photos | Planned |
-| 10 | Security pass, QA, production setup (Vercel + Neon + domain) | Planned |
+| 2 | Postgres + Prisma schema, migrations, seed | ✅ Done |
+| 3 | Server helpers (`src/lib/server/*`): session, validation, orders, coupons, email | ✅ Done |
+| 4 | Server auth: register/OTP/login/session, admin login | ✅ Done |
+| 5 | Products + categories APIs, replace `CatalogContext` reads with fetch/server components | ✅ Done |
+| 6 | Cart validation, coupons, checkout → order creation (transactional) | ✅ Done |
+| 7 | Razorpay test mode + webhook | ✅ Done |
+| 8 | Orders, customers, analytics admin APIs; emails | ✅ Done |
+| 9 | Cloudinary uploads, real product photos | ✅ Done |
+| 10 | Security pass, QA, production setup (Vercel + Neon + domain) | Next — needs client accounts |
 
 **Reuse from Treasure Trove:** `lib/auth`, `otp`, `rate-limit`, `razorpay`, `cloudinary`, `email`, `pricing`, `coupons`,
 `stock-reservation`, `dal/*`, `proxy.ts`, and the payment-confirmation flow — adapt names, add the Collection level.

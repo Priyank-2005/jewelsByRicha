@@ -1,4 +1,4 @@
-import type { ArtKind, Tone } from "@/data/catalog";
+import type { ArtKind, Tone } from "@/types/shop";
 
 const TONES: Record<Tone, { bg1: string; bg2: string; metal1: string; metal2: string; stone: string; accent: string }> = {
   gold: { bg1: "#faf5ec", bg2: "#ebdccb", metal1: "#e4d092", metal2: "#a87f2a", stone: "#fffef8", accent: "#141211" },

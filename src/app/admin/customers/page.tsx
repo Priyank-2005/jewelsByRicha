@@ -3,12 +3,12 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
-import { useCatalog } from "@/context/CatalogContext";
+import { useAdmin } from "@/context/AdminContext";
 import { EmptyRow, PageHeader } from "@/components/admin/ui";
 import { formatDate, formatPrice } from "@/lib/utils";
 
 export default function AdminCustomers() {
-  const { customers, orders } = useCatalog();
+  const { customers, orders } = useAdmin();
   const [q, setQ] = useState("");
 
   const rows = useMemo(

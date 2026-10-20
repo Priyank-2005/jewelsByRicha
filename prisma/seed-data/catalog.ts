@@ -1,38 +1,4 @@
-export type ArtKind =
-  | "watch"
-  | "necklace"
-  | "chain-necklace"
-  | "bangle"
-  | "bracelet"
-  | "chain-bracelet"
-  | "pendant"
-  | "stud"
-  | "drop"
-  | "hoop"
-  | "ring"
-  | "mangalsutra"
-  | "combo";
-
-export type Tone = "gold" | "rose" | "onyx" | "pearl";
-
-export interface Collection {
-  id: string;
-  name: string;
-  slug: string;
-  tagline: string;
-  description: string;
-}
-
-export interface Category {
-  id: string;
-  name: string;
-  slug: string;
-  collectionId: string;
-  kind: ArtKind;
-  description: string;
-  active: boolean;
-  sortOrder: number;
-}
+import type { ArtKind, Category, Collection } from "../../src/types/shop";
 
 export const COLLECTIONS: Collection[] = [
   {
@@ -53,6 +19,7 @@ export const COLLECTIONS: Collection[] = [
   },
 ];
 
+const HOME = new Set(["heritage-bangle-kada", "kashmiri-earrings", "festive-necklaces", "pendant-sets", "mangalsutra", "hoop-earrings", "rings", "watches"]);
 const c = (
   id: string,
   collectionId: string,
@@ -61,7 +28,7 @@ const c = (
   kind: ArtKind,
   sortOrder: number,
   description: string,
-): Category => ({ id, collectionId, name, slug, kind, sortOrder, description, active: true });
+): Category => ({ id, collectionId, name, slug, kind, sortOrder, description, active: true, showOnHome: HOME.has(slug) });
 
 export const CATEGORIES: Category[] = [
   // Festive collection
@@ -87,16 +54,3 @@ export const CATEGORIES: Category[] = [
   c("cat-a10", "col-anti-tarnish", "Watches", "watches", "watch", 10, "Slim, minimal watches in gold and black."),
 ];
 
-/** Categories highlighted on the homepage (max 8). Everything else lives on /categories. */
-export const HOME_CATEGORY_SLUGS = [
-  "heritage-bangle-kada",
-  "kashmiri-earrings",
-  "festive-necklaces",
-  "pendant-sets",
-  "mangalsutra",
-  "hoop-earrings",
-  "rings",
-  "watches",
-];
-
-export const getCollection = (id: string) => COLLECTIONS.find((x) => x.id === id);

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Inter } from "next/font/google";
-import { Providers } from "@/components/Providers";
+import { ToastProvider } from "@/context/ToastContext";
 import { AdminShell } from "@/components/admin/AdminShell";
 import "../globals.css";
 
@@ -16,9 +16,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <html lang="en">
       <body className={`${cormorant.variable} ${inter.variable} bg-cream font-sans antialiased`}>
-        <Providers>
+        <ToastProvider>
           <AdminShell>{children}</AdminShell>
-        </Providers>
+        </ToastProvider>
       </body>
     </html>
   );

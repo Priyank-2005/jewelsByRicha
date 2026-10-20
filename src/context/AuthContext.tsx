@@ -1,57 +1,61 @@
 "use client";
 
-/** Mock customer auth (localStorage). Swap for server sessions per BACKEND_PLAN.md. */
+/** Customer session. The cookie is httpOnly and managed by the server; this context mirrors who is signed in. */
 
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
-
-export interface User {
-  name: string;
-  email: string;
-  phone?: string;
-}
+import type { SessionUser } from "@/types/shop";
+import { api } from "@/lib/client/api";
 
 interface AuthContextType {
-  user: User | null;
+  user: SessionUser | null;
   ready: boolean;
-  login: (email: string, name?: string) => void;
-  logout: () => void;
-  updateProfile: (u: Partial<User>) => void;
+  login: (email: string, password: string) => Promise<SessionUser>;
+  /** Step 1 of sign-up: emails a 6-digit code. Returns the code in local development (no mail server). */
+  startRegistration: (input: { name: string; email: string; phone?: string; password: string }) => Promise<{ devOtp?: string }>;
+  /** Step 2: verifies the code, creates the account and signs in. */
+  verifyRegistration: (email: string, otp: string) => Promise<SessionUser>;
+  logout: () => Promise<void>;
+  updateProfile: (u: { name: string; phone?: string }) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
-const KEY = "jbr_user_v1";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<SessionUser | null>(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(KEY);
-      if (raw) setUser(JSON.parse(raw));
-    } catch {}
-    setReady(true);
+    api<{ user: SessionUser | null }>("/api/auth/me")
+      .then((r) => setUser(r.user))
+      .catch(() => setUser(null))
+      .finally(() => setReady(true));
   }, []);
 
-  const persist = (u: User | null) => {
-    setUser(u);
-    if (u) localStorage.setItem(KEY, JSON.stringify(u));
-    else localStorage.removeItem(KEY);
-  };
-
-  const login = useCallback((email: string, name?: string) => {
-    const fallback = email.split("@")[0].replace(/[._]/g, " ");
-    persist({ email, name: name || fallback.replace(/\b\w/g, (c) => c.toUpperCase()) });
+  const login = useCallback(async (email: string, password: string) => {
+    const r = await api<{ user: SessionUser }>("/api/auth/login", { method: "POST", body: { email, password } });
+    setUser(r.user);
+    return r.user;
   }, []);
-  const logout = useCallback(() => persist(null), []);
-  const updateProfile = useCallback((u: Partial<User>) => setUser((prev) => {
-    if (!prev) return prev;
-    const next = { ...prev, ...u };
-    localStorage.setItem(KEY, JSON.stringify(next));
-    return next;
-  }), []);
 
-  return <AuthContext.Provider value={{ user, ready, login, logout, updateProfile }}>{children}</AuthContext.Provider>;
+  const startRegistration = useCallback((input: { name: string; email: string; phone?: string; password: string }) => api<{ devOtp?: string }>("/api/auth/register", { method: "POST", body: input }), []);
+
+  const verifyRegistration = useCallback(async (email: string, otp: string) => {
+    const r = await api<{ user: SessionUser }>("/api/auth/verify-otp", { method: "POST", body: { email, otp } });
+    setUser(r.user);
+    return r.user;
+  }, []);
+
+  const logout = useCallback(async () => {
+    await api("/api/auth/logout", { method: "POST" }).catch(() => {});
+    setUser(null);
+  }, []);
+
+  const updateProfile = useCallback(async (u: { name: string; phone?: string }) => {
+    const r = await api<{ user: SessionUser }>("/api/auth/profile", { method: "PUT", body: u });
+    setUser(r.user);
+  }, []);
+
+  return <AuthContext.Provider value={{ user, ready, login, startRegistration, verifyRegistration, logout, updateProfile }}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

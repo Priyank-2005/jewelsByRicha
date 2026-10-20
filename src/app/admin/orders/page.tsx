@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
-import { useCatalog } from "@/context/CatalogContext";
+import { useAdmin } from "@/context/AdminContext";
 import { EmptyRow, PageHeader } from "@/components/admin/ui";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { cn, formatDate, formatPrice } from "@/lib/utils";
@@ -11,7 +11,7 @@ import { cn, formatDate, formatPrice } from "@/lib/utils";
 const TABS = ["ALL", "PENDING", "CONFIRMED", "SHIPPED", "DELIVERED", "CANCELLED"] as const;
 
 export default function AdminOrders() {
-  const { orders } = useCatalog();
+  const { orders } = useAdmin();
   const [tab, setTab] = useState<(typeof TABS)[number]>("ALL");
   const [q, setQ] = useState("");
 

@@ -10,18 +10,16 @@ import { ProductGrid } from "@/components/ui/ProductCard";
 import { HeroSlider } from "@/components/home/HeroSlider";
 import { SectionHead } from "@/components/ui/SectionHead";
 import { HERO } from "@/data/images";
-import { HOME_CATEGORY_SLUGS } from "@/data/catalog";
 import { categoryCover } from "@/lib/catalog";
-import { BRAND } from "@/config/brand";
 import { cn } from "@/lib/utils";
 
 const rise = { initial: { opacity: 0, y: 26 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, margin: "-60px" }, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const } };
 
-const TRUST = [
+const trustItems = (threshold: number) => [
   { icon: ShieldCheck, title: "Anti-tarnish", text: "Stays golden, wear after wear" },
   { icon: Droplets, title: "100% waterproof", text: "Showers, gym & monsoons" },
   { icon: Gem, title: "Premium quality", text: "Skin-friendly, nickel-safe" },
-  { icon: Truck, title: "Free shipping", text: `On orders above ₹${BRAND.freeShippingThreshold}` },
+  { icon: Truck, title: "Free shipping", text: `On orders above ₹${threshold.toLocaleString("en-IN")}` },
   { icon: Gift, title: "Gift-ready", text: "Signature JR packaging" },
 ];
 
@@ -34,14 +32,11 @@ const REVIEWS = [
 const INSTA = ["/images/hero/1777999745587-31af0844db6c.jpg", "/images/stock/1631982690223-8aa4be0a2497.jpg", "/images/stock/1762686130435-897de4b26aac.jpg", "/images/stock/1602173574767-37ac01994b2a.jpg", "/images/stock/1783541507490-edb026e2a961.jpg", "/images/stock/1572545884955-6f3d7b6540a0.jpg"];
 
 export default function HomePage() {
-  const { products, categories, collections } = useCatalog();
+  const { products, categories, collections, settings } = useCatalog();
   const [tab, setTab] = useState<"all" | "festive" | "anti-tarnish">("all");
 
   const live = useMemo(() => products.filter((p) => p.status === "ACTIVE"), [products]);
-  const homeCats = useMemo(
-    () => HOME_CATEGORY_SLUGS.map((s) => categories.find((c) => c.slug === s)).filter((c): c is NonNullable<typeof c> => !!c && c.active).slice(0, 8),
-    [categories],
-  );
+  const homeCats = useMemo(() => categories.filter((c) => c.active && c.showOnHome).sort((a, b) => a.sortOrder - b.sortOrder).slice(0, 8), [categories]);
   const best = useMemo(() => {
     const col = collections.find((c) => c.slug === tab);
     return live.filter((p) => (p.isBestSeller || p.isFeatured) && (!col || p.collectionId === col.id)).slice(0, 8);
@@ -55,7 +50,7 @@ export default function HomePage() {
       {/* ───────── TRUST STRIP (Light: Ivory Goldish Pink) ───────── */}
       <section className="border-b border-[#ebd8cc] bg-gradient-to-r from-[#fdf8f4] via-[#faf2eb] to-[#fbf1ea]">
         <div className="hide-scrollbar mx-auto flex max-w-7xl gap-8 overflow-x-auto px-5 py-7 md:grid md:grid-cols-5 md:gap-4 md:px-10 md:py-9">
-          {TRUST.map(({ icon: Icon, title, text }) => (
+          {trustItems(settings.freeShippingThreshold).map(({ icon: Icon, title, text }) => (
             <div key={title} className="flex shrink-0 items-center gap-3.5 md:justify-center">
               <Icon className="h-6 w-6 shrink-0 text-[#c49e49]" strokeWidth={1.25} />
               <div className="leading-tight">
@@ -254,10 +249,10 @@ export default function HomePage() {
         }}
       >
         <div className="mx-auto w-full max-w-7xl px-5 md:px-10">
-          <motion.div {...rise}><SectionHead eyebrow="Follow along" title={<>@{BRAND.social.instagram}</>} /></motion.div>
+          <motion.div {...rise}><SectionHead eyebrow="Follow along" title={<>@{settings.instagram}</>} /></motion.div>
           <div className="grid grid-cols-3 gap-2.5 md:grid-cols-6 md:gap-3.5">
             {INSTA.map((src, i) => (
-              <a key={i} href={`https://instagram.com/${BRAND.social.instagram}`} target="_blank" rel="noreferrer" className="group relative aspect-square overflow-hidden bg-[#faf2eb] ring-1 ring-[#ebd8cc]">
+              <a key={i} href={`https://instagram.com/${settings.instagram}`} target="_blank" rel="noreferrer" className="group relative aspect-square overflow-hidden bg-[#faf2eb] ring-1 ring-[#ebd8cc]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={src} alt="" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-108" />
                 <span className="absolute inset-0 flex items-center justify-center bg-[#140e0c]/60 opacity-0 transition-opacity group-hover:opacity-100"><Instagram className="h-6 w-6 text-[#faf3ec]" /></span>

@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import type { Product } from "@/data/products";
+import type { Product } from "@/types/shop";
 import { useToast } from "./ToastContext";
 import { useCatalog } from "./CatalogContext";
 

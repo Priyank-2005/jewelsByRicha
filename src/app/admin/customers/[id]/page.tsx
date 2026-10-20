@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { use } from "react";
 import { ArrowLeft, Mail, MapPin, Phone } from "lucide-react";
-import { useCatalog } from "@/context/CatalogContext";
+import { useAdmin } from "@/context/AdminContext";
 import { PageHeader, StatCard } from "@/components/admin/ui";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { IndianRupee, ShoppingCart } from "lucide-react";
@@ -11,7 +11,7 @@ import { formatDate, formatPrice } from "@/lib/utils";
 
 export default function AdminCustomerDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const { customers, orders } = useCatalog();
+  const { customers, orders } = useAdmin();
   const c = customers.find((x) => x.id === id);
   if (!c) return <p className="text-muted">Customer not found. <Link href="/admin/customers" className="underline">Back to customers</Link></p>;
 

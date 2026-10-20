@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useToast } from "@/context/ToastContext";
+import { api } from "@/lib/client/api";
 
 export function Newsletter() {
   const [email, setEmail] = useState("");

@@ -1,6 +1,6 @@
 "use client";
 
-import type { Product } from "@/data/products";
+import type { Product } from "@/types/shop";
 import { useCatalog } from "@/context/CatalogContext";
 import { ProductArt } from "./ProductArt";
 

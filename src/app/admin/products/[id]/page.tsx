@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { use } from "react";
-import { useCatalog } from "@/context/CatalogContext";
+import { useAdmin } from "@/context/AdminContext";
 import { ProductForm } from "@/components/admin/ProductForm";
 
 export default function EditProduct({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const { products, ready } = useCatalog();
+  const { products, ready } = useAdmin();
   const product = products.find((p) => p.id === id);
   if (!product) {
     return <p className="text-muted">{ready ? <>Product not found. <Link href="/admin/products" className="underline">Back to products</Link></> : "Loading…"}</p>;

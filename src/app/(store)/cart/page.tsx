@@ -8,12 +8,11 @@ import { ProductVisual } from "@/components/ui/ProductVisual";
 import { QuantitySelector } from "@/components/ui/QuantitySelector";
 import { ProductGrid } from "@/components/ui/ProductCard";
 import { CheckoutSteps } from "@/components/ui/CheckoutSteps";
-import { BRAND } from "@/config/brand";
 import { formatPrice } from "@/lib/utils";
 
 export default function CartPage() {
   const { items, subtotal, updateQuantity, removeFromCart, ready } = useCart();
-  const { products, getCategory } = useCatalog();
+  const { products, getCategory, settings } = useCatalog();
 
   if (!ready) return <div className="py-32 text-center text-muted">Loading…</div>;
 
@@ -37,9 +36,9 @@ export default function CartPage() {
       </div>
     );
 
-  const shipping = subtotal >= BRAND.freeShippingThreshold ? 0 : BRAND.shippingFee;
-  const remaining = Math.max(BRAND.freeShippingThreshold - subtotal, 0);
-  const pct = Math.min((subtotal / BRAND.freeShippingThreshold) * 100, 100);
+  const shipping = subtotal >= settings.freeShippingThreshold ? 0 : settings.shippingFee;
+  const remaining = Math.max(settings.freeShippingThreshold - subtotal, 0);
+  const pct = Math.min((subtotal / settings.freeShippingThreshold) * 100, 100);
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 pb-28 pt-8 md:px-8 md:pb-20 md:pt-12">

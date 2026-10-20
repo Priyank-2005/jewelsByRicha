@@ -3,16 +3,19 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Pencil, Plus, Search, Trash2 } from "lucide-react";
-import { useCatalog } from "@/context/CatalogContext";
+import { useAdmin } from "@/context/AdminContext";
 import { useToast } from "@/context/ToastContext";
 import { EmptyRow, PageHeader } from "@/components/admin/ui";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { ProductVisual } from "@/components/ui/ProductVisual";
 import { formatPrice } from "@/lib/utils";
+import type { Product } from "@/types/shop";
 
 export default function AdminProducts() {
-  const { products, categories, collections, deleteProduct, saveProduct } = useCatalog();
+  const { products, categories, collections, deleteProduct, saveProduct } = useAdmin();
   const { showToast } = useToast();
+  const toggle = (p: Product) => saveProduct({ ...p, status: p.status === "ACTIVE" ? "DRAFT" : "ACTIVE" }).then(() => showToast(p.status === "ACTIVE" ? "Moved to drafts" : "Product is live")).catch((e: Error) => showToast(e.message));
+  const remove = (p: Product) => deleteProduct(p.id).then(() => showToast("Product deleted")).catch((e: Error) => showToast(e.message));
   const [q, setQ] = useState("");
   const [cat, setCat] = useState("all");
   const [status, setStatus] = useState("all");
@@ -70,10 +73,10 @@ export default function AdminProducts() {
                 <div className="text-xs text-muted">{categories.find((c) => c.id === p.categoryId)?.name}</div>
                 <div className="mt-1 text-sm">{formatPrice(p.price)} <span className="text-xs text-muted">· {p.stock === 0 ? "sold out" : `${p.stock} in stock`}</span></div>
                 <div className="mt-2 flex items-center justify-between">
-                  <button onClick={() => saveProduct({ ...p, status: p.status === "ACTIVE" ? "DRAFT" : "ACTIVE" })}><StatusBadge status={p.status} /></button>
+                  <button onClick={() => toggle(p)}><StatusBadge status={p.status} /></button>
                   <div className="flex gap-1">
                     <Link href={`/admin/products/${p.id}`} className="rounded-md p-2 text-muted hover:bg-cream" aria-label="Edit"><Pencil className="h-4 w-4" /></Link>
-                    <button onClick={() => { if (confirm(`Delete “${p.name}”?`)) { deleteProduct(p.id); showToast("Product deleted"); } }} className="rounded-md p-2 text-muted hover:bg-red-50 hover:text-red-700" aria-label="Delete"><Trash2 className="h-4 w-4" /></button>
+                    <button onClick={() => { if (confirm(`Delete “${p.name}”?`)) { void remove(p); } }} className="rounded-md p-2 text-muted hover:bg-red-50 hover:text-red-700" aria-label="Delete"><Trash2 className="h-4 w-4" /></button>
                   </div>
                 </div>
               </div>
@@ -99,13 +102,13 @@ export default function AdminProducts() {
                   <td className="a-td">{formatPrice(p.price)}{p.originalPrice && <span className="ml-1 text-xs text-muted line-through">{formatPrice(p.originalPrice)}</span>}</td>
                   <td className="a-td"><span className={p.stock === 0 ? "font-medium text-red-700" : p.stock <= 5 ? "font-medium text-gold-deep" : ""}>{p.stock}</span></td>
                   <td className="a-td">
-                    <button onClick={() => saveProduct({ ...p, status: p.status === "ACTIVE" ? "DRAFT" : "ACTIVE" })} title="Click to toggle"><StatusBadge status={p.status} /></button>
+                    <button onClick={() => toggle(p)} title="Click to toggle"><StatusBadge status={p.status} /></button>
                   </td>
                   <td className="a-td">
                     <div className="flex justify-end gap-1">
                       <Link href={`/admin/products/${p.id}`} className="rounded-md p-2 text-muted hover:bg-cream hover:text-ink" aria-label="Edit"><Pencil className="h-4 w-4" /></Link>
                       <button
-                        onClick={() => { if (confirm(`Delete “${p.name}”?`)) { deleteProduct(p.id); showToast("Product deleted"); } }}
+                        onClick={() => { if (confirm(`Delete “${p.name}”?`)) { void remove(p); } }}
                         className="rounded-md p-2 text-muted hover:bg-red-50 hover:text-red-700" aria-label="Delete"
                       ><Trash2 className="h-4 w-4" /></button>
                     </div>

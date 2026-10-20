@@ -1,43 +1,48 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { MapPin, Plus, Trash2 } from "lucide-react";
+import type { SavedAddress } from "@/types/shop";
+import { api } from "@/lib/client/api";
+import { useToast } from "@/context/ToastContext";
 
-interface Addr {
-  id: string;
-  name: string;
-  phone: string;
-  line: string;
-  city: string;
-  state: string;
-  pincode: string;
-}
-const KEY = "jbr_addresses_v1";
 const EMPTY = { name: "", phone: "", line: "", city: "", state: "", pincode: "" };
 const FIELDS = [["name", "Full name"], ["phone", "Phone"], ["line", "Address"], ["city", "City"], ["state", "State"], ["pincode", "PIN code"]] as const;
 
 export default function AddressesPage() {
-  const [list, setList] = useState<Addr[]>([]);
+  const [list, setList] = useState<SavedAddress[] | null>(null);
   const [adding, setAdding] = useState(false);
   const [f, setF] = useState(EMPTY);
-  const [mounted, setMounted] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const { showToast } = useToast();
 
-  useEffect(() => {
-    try {
-      const r = localStorage.getItem(KEY);
-      if (r) setList(JSON.parse(r));
-    } catch {}
-    setMounted(true);
+  const load = useCallback(() => {
+    api<{ addresses: SavedAddress[] }>("/api/account/addresses").then((r) => setList(r.addresses)).catch(() => setList([]));
   }, []);
-  useEffect(() => {
-    if (mounted) localStorage.setItem(KEY, JSON.stringify(list));
-  }, [list, mounted]);
+  useEffect(load, [load]);
 
-  const save = (e: React.FormEvent) => {
+  const save = async (e: React.FormEvent) => {
     e.preventDefault();
-    setList((l) => [...l, { id: String(Date.now()), ...f }]);
-    setF(EMPTY);
-    setAdding(false);
+    setBusy(true);
+    try {
+      await api("/api/account/addresses", { method: "POST", body: f });
+      setF(EMPTY);
+      setAdding(false);
+      load();
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : "Could not save the address");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const remove = async (id: string) => {
+    await api(`/api/account/addresses/${id}`, { method: "DELETE" }).catch(() => {});
+    load();
+  };
+  const makeDefault = async (a: SavedAddress) => {
+    await api(`/api/account/addresses/${a.id}`, { method: "PUT", body: { ...a, isDefault: true } }).catch(() => {});
+    load();
   };
 
   return (
@@ -55,24 +60,25 @@ export default function AddressesPage() {
             </label>
           ))}
           <div className="flex gap-3 sm:col-span-2">
-            <button className="btn-dark">Save address</button>
+            <button disabled={busy} className="btn-dark">Save address</button>
             <button type="button" onClick={() => setAdding(false)} className="btn-outline">Cancel</button>
           </div>
         </form>
       )}
-      {list.length === 0 && !adding ? (
+      {list && list.length === 0 && !adding ? (
         <div className="border border-dashed border-line p-12 text-center text-muted">
           <MapPin className="mx-auto mb-2 h-8 w-8 text-gold-mid" strokeWidth={1.2} />
           No saved addresses yet.
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
-          {list.map((a) => (
+          {(list ?? []).map((a) => (
             <div key={a.id} className="relative border border-line bg-white p-5 text-sm">
-              <div className="font-medium">{a.name}</div>
+              <div className="font-medium">{a.name} {a.isDefault && <span className="ml-1 rounded-full bg-cream px-2 py-0.5 text-[10px] uppercase tracking-wider text-gold-deep">Default</span>}</div>
               <div className="text-muted">{a.line}, {a.city}, {a.state} – {a.pincode}</div>
               <div className="text-muted">{a.phone}</div>
-              <button onClick={() => setList((l) => l.filter((x) => x.id !== a.id))} aria-label="Delete" className="absolute right-4 top-4 text-muted hover:text-red-700">
+              {!a.isDefault && <button onClick={() => makeDefault(a)} className="mt-3 text-xs text-gold-deep underline">Make default</button>}
+              <button onClick={() => remove(a.id)} aria-label="Delete" className="absolute right-4 top-4 text-muted hover:text-red-700">
                 <Trash2 className="h-4 w-4" />
               </button>
             </div>

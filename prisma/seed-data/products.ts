@@ -1,35 +1,7 @@
-import { CATEGORIES, type Tone } from "./catalog";
-import { slugify } from "@/lib/utils";
+import { CATEGORIES } from "./catalog";
+import type { Product, ProductBadge, Tone } from "../../src/types/shop";
+const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 import { POOLS } from "./images";
-
-export type ProductBadge = "NEW" | "BEST SELLER" | "SALE" | "LIMITED";
-
-export interface Product {
-  id: string;
-  name: string;
-  slug: string;
-  categoryId: string;
-  collectionId: string;
-  price: number;
-  originalPrice?: number;
-  description: string;
-  shortDescription: string;
-  /** Real photos (URLs). When empty, the storefront draws an illustrated placeholder. */
-  images: string[];
-  tone: Tone;
-  rating: number;
-  reviewCount: number;
-  badge?: ProductBadge;
-  isNew: boolean;
-  isBestSeller: boolean;
-  isFeatured: boolean;
-  stock: number;
-  status: "ACTIVE" | "DRAFT";
-  features: string[];
-  material: string;
-  careInstructions: string;
-  createdAt: string;
-}
 
 // categoryId -> [base price, three product names]
 const SEED: Record<string, [number, string[]]> = {

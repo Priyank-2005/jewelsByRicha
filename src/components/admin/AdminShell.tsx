@@ -4,9 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Archive, ExternalLink, Layers, LayoutDashboard, LogOut, Menu, ShoppingBag, ShoppingCart, Tag, Users, X } from "lucide-react";
+import { ExternalLink, Layers, LayoutDashboard, LogOut, Menu, Settings, ShoppingBag, ShoppingCart, Tag, Users, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useCatalog } from "@/context/CatalogContext";
+import { AdminProvider, useAdmin } from "@/context/AdminContext";
+import { api } from "@/lib/client/api";
 
 const NAV = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
@@ -15,35 +16,32 @@ const NAV = [
   { name: "Orders", href: "/admin/orders", icon: ShoppingCart },
   { name: "Customers", href: "/admin/customers", icon: Users },
   { name: "Coupons", href: "/admin/coupons", icon: Tag },
+  { name: "Settings", href: "/admin/settings", icon: Settings },
 ];
-
-const KEY = "jbr_admin_v1";
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const router = useRouter();
-  const { orders, resetDemoData } = useCatalog();
-  const [open, setOpen] = useState(false);
-  const [authed, setAuthed] = useState<boolean | null>(null);
-  const isLogin = pathname === "/admin/login";
+  if (pathname === "/admin/login") return <>{children}</>;
+  return (
+    <AdminProvider>
+      <Frame>{children}</Frame>
+    </AdminProvider>
+  );
+}
 
-  useEffect(() => {
-    let ok = false;
-    try { ok = localStorage.getItem(KEY) === "1"; } catch {}
-    setAuthed(ok);
-    if (!ok && !isLogin) router.replace("/admin/login");
-    if (ok && isLogin) router.replace("/admin");
-  }, [isLogin, router, pathname]);
+function Frame({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const { orders, ready, error, refresh, unreadMessages, integrations } = useAdmin();
+  const [open, setOpen] = useState(false);
 
   useEffect(() => setOpen(false), [pathname]);
 
-  if (isLogin) return <>{children}</>;
-  if (!authed) return <div className="flex min-h-screen items-center justify-center text-sm text-muted">Loading…</div>;
-
   const pending = orders.filter((o) => o.status === "PENDING").length;
-  const logout = () => {
-    try { localStorage.removeItem(KEY); } catch {}
+  const logout = async () => {
+    await api("/api/admin/logout", { method: "POST" }).catch(() => {});
     router.push("/admin/login");
+    router.refresh();
   };
 
   return (
@@ -68,13 +66,13 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                 <n.icon className={cn("h-[18px] w-[18px]", active && "text-gold-mid")} />
                 {n.name}
                 {n.name === "Orders" && pending > 0 && <span className="ml-auto rounded-full bg-gold px-2 py-0.5 text-[10px] font-semibold text-ink">{pending}</span>}
+                {n.name === "Settings" && unreadMessages > 0 && <span className="ml-auto rounded-full bg-ivory/15 px-2 py-0.5 text-[10px]">{unreadMessages} msg</span>}
               </Link>
             );
           })}
         </nav>
         <div className="space-y-1 border-t border-ivory/10 p-3 text-sm">
           <Link href="/" target="_blank" className="flex items-center gap-3 rounded-lg px-3 py-2 text-ivory/65 hover:bg-ivory/5 hover:text-ivory"><ExternalLink className="h-[18px] w-[18px]" /> View storefront</Link>
-          <button onClick={() => { if (confirm("Reset all demo data (products, orders, coupons) to the original seed?")) resetDemoData(); }} className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-ivory/65 hover:bg-ivory/5 hover:text-ivory"><Archive className="h-[18px] w-[18px]" /> Reset demo data</button>
           <button onClick={logout} className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-ivory/65 hover:bg-red-500/10 hover:text-red-300"><LogOut className="h-[18px] w-[18px]" /> Logout</button>
         </div>
       </aside>
@@ -84,11 +82,23 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           <button className="md:hidden" onClick={() => setOpen(true)} aria-label="Open menu"><Menu className="h-5 w-5" /></button>
           <p className="hidden text-sm text-muted md:block">Welcome back, <span className="font-medium text-ink">Richa</span></p>
           <div className="flex items-center gap-3">
-            <span className="hidden rounded-full border border-gold-light bg-cream px-3 py-1 text-[11px] font-medium uppercase tracking-wider text-gold-deep sm:block">Demo data</span>
+            {!integrations.razorpay && <span title="Razorpay keys are not set: online payments run in test (mock) mode" className="hidden rounded-full border border-gold-light bg-cream px-3 py-1 text-[11px] font-medium uppercase tracking-wider text-gold-deep sm:block">Payments: test mode</span>}
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-ink font-serif text-ivory">R</div>
           </div>
         </header>
-        <main className="flex-1 overflow-y-auto p-4 md:p-8">{children}</main>
+        <main className="flex-1 overflow-y-auto p-4 md:p-8">
+          {!ready ? (
+            <div className="flex h-64 items-center justify-center text-sm text-muted">Loading…</div>
+          ) : error ? (
+            <div className="a-card mx-auto max-w-md p-8 text-center">
+              <p className="font-serif text-xl">Couldn&apos;t load the admin data</p>
+              <p className="mt-1 text-sm text-muted">{error}</p>
+              <button onClick={() => void refresh()} className="a-btn-dark mt-4">Try again</button>
+            </div>
+          ) : (
+            children
+          )}
+        </main>
       </div>
     </div>
   );
