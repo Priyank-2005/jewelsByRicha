@@ -1,58 +1,48 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useEffect, useState } from "react";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { IndianRupee, Package, ShoppingCart, Users, AlertTriangle } from "lucide-react";
-import { useAdmin } from "@/context/AdminContext";
+import { AlertTriangle, IndianRupee, Package, ShoppingCart, Users } from "lucide-react";
+import { api } from "@/lib/client/api";
 import { PageHeader, StatCard } from "@/components/admin/ui";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { formatDate, formatPrice } from "@/lib/utils";
+import type { Order, Product } from "@/types/shop";
 
-const TODAY = new Date("2026-10-18T12:00:00+05:30");
+interface Stats {
+  revenue: number;
+  avgOrder: number;
+  orderCount: number;
+  pending: number;
+  customers: number;
+  products: { total: number; active: number };
+  daily: { key: string; label: string; revenue: number; orders: number }[];
+  topCategories: { name: string; value: number }[];
+  recentOrders: Order[];
+  lowStock: Product[];
+}
 
 export default function Dashboard() {
-  const { orders, products, customers, categories } = useAdmin();
+  const [s, setS] = useState<Stats | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const valid = orders.filter((o) => o.status !== "CANCELLED");
-  const revenue = valid.reduce((s, o) => s + o.total, 0);
-  const pending = orders.filter((o) => o.status === "PENDING").length;
-  const aov = valid.length ? revenue / valid.length : 0;
+  useEffect(() => {
+    api<Stats>("/api/admin/stats").then(setS).catch((e: Error) => setError(e.message));
+  }, []);
 
-  const daily = useMemo(() => {
-    const days = Array.from({ length: 30 }, (_, i) => {
-      const d = new Date(TODAY.getTime() - (29 - i) * 86400000);
-      return { key: d.toISOString().slice(0, 10), label: d.toLocaleDateString("en-IN", { day: "numeric", month: "short", timeZone: "Asia/Kolkata" }), revenue: 0, orders: 0 };
-    });
-    valid.forEach((o) => {
-      const k = new Date(o.createdAt).toISOString().slice(0, 10);
-      const day = days.find((d) => d.key === k);
-      if (day) { day.revenue += o.total; day.orders += 1; }
-    });
-    return days;
-  }, [valid]);
-
-  const byCategory = useMemo(() => {
-    const m = new Map<string, number>();
-    valid.forEach((o) => o.items.forEach((it) => {
-      const p = products.find((x) => x.id === it.productId);
-      const c = categories.find((x) => x.id === p?.categoryId)?.name ?? "Other";
-      m.set(c, (m.get(c) ?? 0) + it.price * it.quantity);
-    }));
-    return [...m.entries()].map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value).slice(0, 6);
-  }, [valid, products, categories]);
-
-  const low = products.filter((p) => p.status === "ACTIVE" && p.stock <= 5).sort((a, b) => a.stock - b.stock).slice(0, 6);
+  if (error) return <p className="text-sm text-red-700">{error}</p>;
+  if (!s) return <p className="text-muted">Loading dashboard…</p>;
 
   return (
     <div>
       <PageHeader title="Dashboard" subtitle="Snapshot of your store — last 30 days" />
 
       <div className="grid grid-cols-2 gap-3 md:gap-4 xl:grid-cols-4">
-        <StatCard label="Revenue" value={formatPrice(revenue)} hint={`Avg. order ${formatPrice(aov)}`} icon={IndianRupee} />
-        <StatCard label="Orders" value={orders.length} hint={`${pending} awaiting confirmation`} icon={ShoppingCart} />
-        <StatCard label="Customers" value={customers.length} hint="Registered accounts" icon={Users} />
-        <StatCard label="Products" value={products.length} hint={`${products.filter((p) => p.status === "ACTIVE").length} live on store`} icon={Package} />
+        <StatCard label="Revenue" value={formatPrice(s.revenue)} hint={`Avg. order ${formatPrice(s.avgOrder)}`} icon={IndianRupee} />
+        <StatCard label="Orders" value={s.orderCount} hint={`${s.pending} awaiting confirmation`} icon={ShoppingCart} />
+        <StatCard label="Customers" value={s.customers} hint="Registered accounts" icon={Users} />
+        <StatCard label="Products" value={s.products.total} hint={`${s.products.active} live on store`} icon={Package} />
       </div>
 
       <div className="mt-6 grid gap-6 xl:grid-cols-3">
@@ -60,7 +50,7 @@ export default function Dashboard() {
           <h2 className="mb-4 font-serif text-xl font-semibold">Sales</h2>
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={daily} margin={{ left: -10, right: 8, top: 4 }}>
+              <BarChart data={s.daily} margin={{ left: -10, right: 8, top: 4 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5dcc8" vertical={false} />
                 <XAxis dataKey="label" tick={{ fontSize: 11, fill: "#7a7266" }} tickLine={false} axisLine={false} interval={4} />
                 <YAxis tick={{ fontSize: 11, fill: "#7a7266" }} tickLine={false} axisLine={false} tickFormatter={(v) => (v >= 1000 ? `${v / 1000}k` : v)} />
@@ -73,16 +63,20 @@ export default function Dashboard() {
 
         <div className="a-card p-5">
           <h2 className="mb-4 font-serif text-xl font-semibold">Top categories</h2>
-          <div className="h-72">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={byCategory} layout="vertical" margin={{ left: 10, right: 8 }}>
-                <XAxis type="number" hide />
-                <YAxis type="category" dataKey="name" width={118} tick={{ fontSize: 11, fill: "#2b2926" }} tickLine={false} axisLine={false} />
-                <Tooltip formatter={(v) => formatPrice(Number(v))} cursor={{ fill: "#f4ede0" }} contentStyle={{ borderRadius: 8, border: "1px solid #e5dcc8" }} />
-                <Bar dataKey="value" fill="#b8913a" radius={[0, 4, 4, 0]} name="Sales" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+          {s.topCategories.length === 0 ? (
+            <p className="py-16 text-center text-sm text-muted">No sales in the last 30 days yet.</p>
+          ) : (
+            <div className="h-72">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={s.topCategories} layout="vertical" margin={{ left: 10, right: 8 }}>
+                  <XAxis type="number" hide />
+                  <YAxis type="category" dataKey="name" width={118} tick={{ fontSize: 11, fill: "#2b2926" }} tickLine={false} axisLine={false} />
+                  <Tooltip formatter={(v) => formatPrice(Number(v))} cursor={{ fill: "#f4ede0" }} contentStyle={{ borderRadius: 8, border: "1px solid #e5dcc8" }} />
+                  <Bar dataKey="value" fill="#b8913a" radius={[0, 4, 4, 0]} name="Sales" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          )}
         </div>
       </div>
 
@@ -93,10 +87,10 @@ export default function Dashboard() {
             <Link href="/admin/orders" className="text-sm text-gold-deep hover:underline">View all</Link>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full min-w-[520px]">
               <thead className="bg-cream/60"><tr><th className="a-th">Order</th><th className="a-th">Customer</th><th className="a-th">Date</th><th className="a-th">Status</th><th className="a-th text-right">Total</th></tr></thead>
               <tbody className="divide-y divide-line">
-                {orders.slice(0, 6).map((o) => (
+                {s.recentOrders.map((o) => (
                   <tr key={o.id} className="hover:bg-cream/40">
                     <td className="a-td font-medium"><Link href={`/admin/orders/${o.id}`} className="hover:text-gold-deep">{o.id}</Link></td>
                     <td className="a-td">{o.customerName}</td>
@@ -112,14 +106,14 @@ export default function Dashboard() {
 
         <div className="a-card p-5">
           <h2 className="mb-4 flex items-center gap-2 font-serif text-xl font-semibold"><AlertTriangle className="h-4 w-4 text-gold-deep" /> Low stock</h2>
-          {low.length === 0 ? (
+          {s.lowStock.length === 0 ? (
             <p className="text-sm text-muted">All products are well stocked.</p>
           ) : (
             <ul className="divide-y divide-line">
-              {low.map((p) => (
-                <li key={p.id} className="flex items-center justify-between py-2.5 text-sm">
-                  <Link href={`/admin/products/${p.id}`} className="hover:text-gold-deep">{p.name}</Link>
-                  <span className={p.stock === 0 ? "font-medium text-red-700" : "font-medium text-gold-deep"}>{p.stock === 0 ? "Sold out" : `${p.stock} left`}</span>
+              {s.lowStock.map((p) => (
+                <li key={p.id} className="flex items-center justify-between gap-3 py-2.5 text-sm">
+                  <Link href={`/admin/products/${p.id}`} className="truncate hover:text-gold-deep">{p.name}</Link>
+                  <span className={p.stock === 0 ? "shrink-0 font-medium text-red-700" : "shrink-0 font-medium text-gold-deep"}>{p.stock === 0 ? "Sold out" : `${p.stock} left`}</span>
                 </li>
               ))}
             </ul>

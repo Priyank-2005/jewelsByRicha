@@ -20,6 +20,8 @@ npm run dev                   # http://localhost:3010
   mock mode (disabled in production), photos are saved to `public/uploads`, and emails (OTP, order updates)
   are printed in the server console.
 - `npm run db:studio` opens a visual database browser.
+- `npm run test:smoke` runs 50+ end-to-end checks against the running server (needs `ADMIN_SEED_PASSWORD` in `.env`; it creates and cancels a few test orders, so don't point it at production).
+- `GET /api/health` is the uptime-check endpoint; `/api/cron/expire-orders` (scheduled in `vercel.json`, secured by `CRON_SECRET`) releases stock from abandoned online orders.
 
 ## What's in the box
 
@@ -30,7 +32,7 @@ npm run dev                   # http://localhost:3010
 | Admin | Dashboard, products (photo upload), categories, orders (status, tracking, cancel), customers, coupons, settings |
 | Backend | Server-side pricing, atomic stock & coupon handling, Razorpay verify + webhook, rate limiting, signed sessions |
 
-Full design, API list and roadmap: [BACKEND_PLAN.md](BACKEND_PLAN.md). Client information checklist: [docs/](docs).
+Every feature, security measure and limitation: **[FEATURES.md](FEATURES.md)**. Design notes and roadmap: [BACKEND_PLAN.md](BACKEND_PLAN.md). Client information checklist: [docs/](docs).
 
 ## Going live
 

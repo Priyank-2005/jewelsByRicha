@@ -6,7 +6,7 @@ import { StatusBadge } from "@/components/ui/StatusBadge";
 import { formatDate, formatPrice } from "@/lib/utils";
 
 export default function OrdersPage() {
-  const { orders, error } = useMyOrders();
+  const { orders, error, hasMore, loadMore, loadingMore, total } = useMyOrders();
   return (
     <div>
       <h2 className="mb-6 font-serif text-3xl">Order history</h2>
@@ -34,6 +34,12 @@ export default function OrdersPage() {
             </li>
           ))}
         </ul>
+      )}
+      {orders && orders.length > 0 && (
+        <div className="mt-8 text-center">
+          <p className="text-xs text-muted">Showing {orders.length} of {total}</p>
+          {hasMore && <button onClick={loadMore} disabled={loadingMore} className="btn-outline mt-3">{loadingMore ? "Loading…" : "Show older orders"}</button>}
+        </div>
       )}
     </div>
   );

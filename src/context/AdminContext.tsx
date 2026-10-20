@@ -1,23 +1,23 @@
 "use client";
 
 /**
- * Admin data store. Loads everything from /api/admin/bootstrap and keeps it in sync after each change:
- * every save/delete goes to the server first and the local copy is updated from the server's answer.
+ * Admin data store. Holds the small, rarely-changing data (collections, categories, coupons, settings, counters).
+ * Big lists (products, orders, customers, messages) are fetched page by page by the pages themselves.
+ * Every save/delete goes to the server first, and the local copy is updated from the server's answer.
  */
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import type { Category, Collection, Coupon, Customer, Order, OrderStatus, Product, StoreSettings } from "@/types/shop";
+import type { Category, Collection, Coupon, Order, OrderStatus, Product, StoreSettings } from "@/types/shop";
 import { api } from "@/lib/client/api";
 
 interface Bootstrap {
   collections: Collection[];
   categories: Category[];
-  products: Product[];
   coupons: Coupon[];
-  orders: Order[];
-  customers: Customer[];
   settings: StoreSettings;
   unreadMessages: number;
+  pendingOrders: number;
+  categoryCounts: Record<string, number>;
   integrations: { razorpay: boolean; cloudinary: boolean; email: boolean };
 }
 
@@ -39,12 +39,11 @@ interface AdminContextType extends Bootstrap {
 const EMPTY: Bootstrap = {
   collections: [],
   categories: [],
-  products: [],
   coupons: [],
-  orders: [],
-  customers: [],
   settings: { freeShippingThreshold: 999, shippingFee: 79, codFee: 49, codEnabled: true, contactEmail: "", contactPhone: "", businessHours: "", instagram: "", lowStockThreshold: 5 },
   unreadMessages: 0,
+  pendingOrders: 0,
+  categoryCounts: {},
   integrations: { razorpay: false, cloudinary: false, email: false },
 };
 
@@ -63,8 +62,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       setData(d);
       setError(null);
     } catch (e) {
-      const status = (e as { status?: number }).status;
-      if (status === 401) {
+      if ((e as { status?: number }).status === 401) {
         window.location.href = "/admin/login";
         return;
       }
@@ -87,7 +85,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       getCategory: (id) => data.categories.find((c) => c.id === id),
 
       saveProduct: async (p) => {
-        const exists = data.products.some((x) => x.id === p.id);
+        const exists = p.id !== "new";
         const payload = {
           name: p.name,
           slug: p.slug,
@@ -107,12 +105,12 @@ export function AdminProvider({ children }: { children: ReactNode }) {
           isNew: p.isNew,
         };
         const r = await api<{ product: Product }>(exists ? `/api/admin/products/${p.id}` : "/api/admin/products", { method: exists ? "PUT" : "POST", body: payload });
-        setData((d) => ({ ...d, products: swap(d.products, r.product) }));
+        void refresh(); // category product counts
         return r.product;
       },
       deleteProduct: async (id) => {
         await api(`/api/admin/products/${id}`, { method: "DELETE" });
-        setData((d) => ({ ...d, products: d.products.filter((p) => p.id !== id) }));
+        void refresh();
       },
 
       saveCategory: async (c, isNew) => {
@@ -154,9 +152,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
 
       updateOrder: async (number, patch) => {
         const r = await api<{ order: Order }>(`/api/admin/orders/${encodeURIComponent(number)}`, { method: "PUT", body: patch });
-        setData((d) => ({ ...d, orders: d.orders.map((o) => (o.id === number ? r.order : o)) }));
-        // cancelling gives stock back, so product stock changed too
-        if (patch.status === "CANCELLED") void refresh();
+        void refresh(); // pending count, coupon usage
         return r.order;
       },
 

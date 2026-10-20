@@ -4,6 +4,7 @@ import { useState } from "react";
 import { CheckCircle2, CircleSlash } from "lucide-react";
 import { useAdmin } from "@/context/AdminContext";
 import { useToast } from "@/context/ToastContext";
+import { api } from "@/lib/client/api";
 import { Field, PageHeader, Toggle } from "@/components/admin/ui";
 import type { StoreSettings } from "@/types/shop";
 
@@ -37,6 +38,7 @@ export default function AdminSettings() {
   ];
 
   return (
+    <>
     <form onSubmit={submit}>
       <PageHeader title="Settings" subtitle="Shipping, payment and contact details used across the store" actions={<button disabled={saving} className="a-btn-dark">{saving ? "Saving…" : "Save settings"}</button>} />
       {error && <div role="alert" className="mb-5 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">{error}</div>}
@@ -73,6 +75,44 @@ export default function AdminSettings() {
           </ul>
         </div>
       </div>
+    </form>
+    <PasswordCard />
+    </>
+  );
+}
+
+function PasswordCard() {
+  const { showToast } = useToast();
+  const [f, setF] = useState({ current: "", next: "", confirm: "" });
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    if (f.next !== f.confirm) return setError("The new passwords don't match.");
+    setBusy(true);
+    try {
+      await api("/api/admin/password", { method: "POST", body: { current: f.current, next: f.next } });
+      showToast("Password changed");
+      setF({ current: "", next: "", confirm: "" });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not change the password");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <form onSubmit={submit} className="a-card mt-6 max-w-xl space-y-4 p-5">
+      <h2 className="font-serif text-xl font-semibold">Change admin password</h2>
+      {error && <div role="alert" className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">{error}</div>}
+      <Field label="Current password"><input required type="password" autoComplete="current-password" className="a-input" value={f.current} onChange={(e) => setF({ ...f, current: e.target.value })} /></Field>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field label="New password" hint="10+ characters with upper, lower case and a number"><input required type="password" autoComplete="new-password" className="a-input" value={f.next} onChange={(e) => setF({ ...f, next: e.target.value })} /></Field>
+        <Field label="Confirm new password"><input required type="password" autoComplete="new-password" className="a-input" value={f.confirm} onChange={(e) => setF({ ...f, confirm: e.target.value })} /></Field>
+      </div>
+      <button disabled={busy} className="a-btn-dark">{busy ? "Updating…" : "Update password"}</button>
     </form>
   );
 }

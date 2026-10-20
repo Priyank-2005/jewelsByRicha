@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+
+const PAGE_SIZE = 12;
 import { SlidersHorizontal } from "lucide-react";
 import { useCatalog } from "@/context/CatalogContext";
 import { ProductGrid } from "@/components/ui/ProductCard";
@@ -30,8 +32,10 @@ export function ShopView({
   const { products, categories, collections } = useCatalog();
   const [sort, setSort] = useState<Sort>(presetFilter === "new-arrivals" ? "newest" : "featured");
   const [band, setBand] = useState("all");
+  const [visible, setVisible] = useState(PAGE_SIZE);
   const [inStock, setInStock] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  useEffect(() => setVisible(PAGE_SIZE), [sort, band, inStock, collectionSlug, categorySlug]);
 
   const collection = collections.find((c) => c.slug === collectionSlug);
   const category = categories.find((c) => c.slug === categorySlug);
@@ -189,7 +193,16 @@ export function ShopView({
             <Link href="/shop" className="btn-dark mt-6">Shop all</Link>
           </div>
         ) : (
-          <ProductGrid products={list} />
+          <>
+            <ProductGrid products={list.slice(0, visible)} />
+            <div className="mt-12 text-center">
+              <p className="text-xs text-muted">Showing {Math.min(visible, list.length)} of {list.length}</p>
+              <div className="mx-auto mt-3 h-px w-40 bg-line"><div className="h-px bg-gold" style={{ width: `${Math.min(100, (visible / list.length) * 100)}%` }} /></div>
+              {visible < list.length && (
+                <button onClick={() => setVisible((v) => v + PAGE_SIZE)} className="btn-outline mt-6">Show more</button>
+              )}
+            </div>
+          </>
         )}
       </div>
     </div>

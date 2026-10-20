@@ -15,6 +15,9 @@ export const ok = <T>(data: T, init?: ResponseInit) => NextResponse.json(data, i
 export function handle<A extends unknown[]>(fn: (...args: A) => Promise<Response>) {
   return async (...args: A): Promise<Response> => {
     try {
+      // Blanket protection: every write (POST/PUT/PATCH/DELETE) is limited per IP, on top of each route's own stricter limits.
+      const req = args[0];
+      if (req instanceof Request && req.method !== "GET" && req.method !== "HEAD") await rateLimit(`mutations:${clientIp(req)}`, 240, 60);
       return await fn(...args);
     } catch (e) {
       if (e instanceof ApiError) return NextResponse.json({ error: e.message, ...e.extra }, { status: e.status });

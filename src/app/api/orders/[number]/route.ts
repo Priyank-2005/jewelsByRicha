@@ -10,6 +10,6 @@ export const GET = handle(async (req: Request, ctx: { params: Promise<{ number: 
   const token = new URL(req.url).searchParams.get("token");
   const o = await prisma.order.findUnique({ where: { number }, include: { items: true } });
   const me = await getCustomer();
-  if (!o || !((me && o.userId === me.id) || validOrderToken(o.number, o.email, token))) throw new ApiError(404, "Order not found");
+  if (!o || !((me && (o.userId === me.id || o.email === me.email)) || validOrderToken(o.number, o.email, token))) throw new ApiError(404, "Order not found");
   return ok({ order: toOrder(o) });
 });

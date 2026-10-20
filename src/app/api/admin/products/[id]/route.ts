@@ -1,11 +1,22 @@
 import prisma from "@/lib/db";
-import { ApiError, body, handle, ok, requireAdmin } from "@/lib/server/api";
+import { ApiError, body, clientIp, handle, ok, rateLimit, requireAdmin } from "@/lib/server/api";
 import { productSchema, slugify } from "@/lib/server/admin-schemas";
 import { toProduct } from "@/lib/server/mappers";
 import { productData } from "@/lib/server/product-data";
 
+export const dynamic = "force-dynamic";
+
+export const GET = handle(async (_req: Request, ctx: { params: Promise<{ id: string }> }) => {
+  await requireAdmin();
+  const { id } = await ctx.params;
+  const p = await prisma.product.findUnique({ where: { id }, include: { images: true } });
+  if (!p) throw new ApiError(404, "Product not found");
+  return ok({ product: toProduct(p) });
+});
+
 export const PUT = handle(async (req: Request, ctx: { params: Promise<{ id: string }> }) => {
   await requireAdmin();
+  await rateLimit(`admin-write:${clientIp(req)}`, 120, 60);
   const { id } = await ctx.params;
   const input = await body(req, productSchema);
   const existing = await prisma.product.findUnique({ where: { id } });
@@ -27,8 +38,9 @@ export const PUT = handle(async (req: Request, ctx: { params: Promise<{ id: stri
   return ok({ product: toProduct(updated) });
 });
 
-export const DELETE = handle(async (_req: Request, ctx: { params: Promise<{ id: string }> }) => {
+export const DELETE = handle(async (req: Request, ctx: { params: Promise<{ id: string }> }) => {
   await requireAdmin();
+  await rateLimit(`admin-write:${clientIp(req)}`, 120, 60);
   const { id } = await ctx.params;
   // order history keeps its snapshot of name / price; the link to the product is simply cleared
   await prisma.product.delete({ where: { id } }).catch(() => {

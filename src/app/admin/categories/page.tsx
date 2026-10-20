@@ -12,14 +12,14 @@ const KINDS: ArtKind[] = ["watch", "necklace", "chain-necklace", "pendant", "man
 const MAX_HOME = 8;
 
 export default function AdminCategories() {
-  const { categories, collections, products, saveCategory, deleteCategory } = useAdmin();
+  const { categories, collections, categoryCounts, saveCategory, deleteCategory } = useAdmin();
   const { showToast } = useToast();
   const [editing, setEditing] = useState<{ cat: Category; isNew: boolean } | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const homeCount = categories.filter((c) => c.showOnHome).length;
-  const count = (id: string) => products.filter((p) => p.categoryId === id).length;
+  const count = (id: string) => categoryCounts[id] ?? 0;
   const fail = (e: unknown) => showToast(e instanceof Error ? e.message : "Something went wrong");
 
   const startNew = (collectionId: string) =>

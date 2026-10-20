@@ -27,6 +27,11 @@ export function CatalogProvider({ data, children }: { data: CatalogData; childre
   return <CatalogContext.Provider value={value}>{children}</CatalogContext.Provider>;
 }
 
+/** Like useCatalog, but returns null outside the storefront (e.g. in the admin panel) instead of throwing. */
+export function useCatalogOptional() {
+  return useContext(CatalogContext);
+}
+
 export function useCatalog() {
   const ctx = useContext(CatalogContext);
   if (!ctx) throw new Error("useCatalog must be used within CatalogProvider");

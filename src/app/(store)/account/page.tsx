@@ -10,12 +10,11 @@ import { formatDate, formatPrice } from "@/lib/utils";
 
 export default function AccountHome() {
   const { user } = useAuth();
-  const { orders } = useMyOrders();
+  const { orders, total, spent } = useMyOrders(3);
   const { ids } = useWishlist();
   const mine = orders ?? [];
-  const spent = mine.reduce((s, o) => s + (o.status === "CANCELLED" ? 0 : o.total), 0);
   const stats: [string, string | number, string][] = [
-    ["Orders", orders ? mine.length : "–", "/account/orders"],
+    ["Orders", orders ? total : "–", "/account/orders"],
     ["Wishlist", ids.length, "/wishlist"],
     ["Total spent", orders ? formatPrice(spent) : "–", "/account/orders"],
   ];

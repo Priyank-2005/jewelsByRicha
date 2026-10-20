@@ -11,9 +11,10 @@ import { ProductVisual } from "@/components/ui/ProductVisual";
 import { ProductGrid } from "@/components/ui/ProductCard";
 import { QuantitySelector } from "@/components/ui/QuantitySelector";
 import { cn, discountPct, formatPrice } from "@/lib/utils";
+import type { Product } from "@/types/shop";
 
-export function ProductClient({ slug }: { slug: string }) {
-  const { products, getCategory, collections, ready } = useCatalog();
+export function ProductClient({ product }: { product: Product }) {
+  const { products, getCategory, collections, settings } = useCatalog();
   const { addToCart } = useCart();
   const { has, toggle } = useWishlist();
   const router = useRouter();
@@ -21,16 +22,6 @@ export function ProductClient({ slug }: { slug: string }) {
   const [img, setImg] = useState(0);
   const [open, setOpen] = useState<string | null>("Description");
   const rail = useRef<HTMLDivElement>(null);
-
-  const product = products.find((p) => p.slug === slug);
-  if (!product) {
-    return (
-      <div className="py-32 text-center">
-        <p className="font-serif text-4xl">{ready ? "Piece not found" : "Loading…"}</p>
-        <Link href="/shop" className="btn-dark mt-6">Back to shop</Link>
-      </div>
-    );
-  }
 
   const cat = getCategory(product.categoryId);
   const col = collections.find((c) => c.id === product.collectionId);
@@ -45,7 +36,7 @@ export function ProductClient({ slug }: { slug: string }) {
     ["Description", product.description],
     ["Material & finish", product.material],
     ["Care instructions", product.careInstructions],
-    ["Shipping & returns", "Ships within 1–2 business days across India. Easy 7-day returns on unused pieces in original packaging. Free shipping on orders above ₹999."],
+    ["Shipping & returns", `Ships within 1–2 business days across India. Easy 7-day returns on unused pieces in original packaging. Free shipping on orders above ₹${settings.freeShippingThreshold.toLocaleString("en-IN")}.`],
   ];
 
   const onScroll = () => {

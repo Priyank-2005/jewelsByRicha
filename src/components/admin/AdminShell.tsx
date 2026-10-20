@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { ExternalLink, Layers, LayoutDashboard, LogOut, Menu, Settings, ShoppingBag, ShoppingCart, Tag, Users, X } from "lucide-react";
+import { ExternalLink, Layers, LayoutDashboard, LogOut, Menu, MessageSquare, Settings, ShoppingBag, ShoppingCart, Tag, Users, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AdminProvider, useAdmin } from "@/context/AdminContext";
 import { api } from "@/lib/client/api";
@@ -16,6 +16,7 @@ const NAV = [
   { name: "Orders", href: "/admin/orders", icon: ShoppingCart },
   { name: "Customers", href: "/admin/customers", icon: Users },
   { name: "Coupons", href: "/admin/coupons", icon: Tag },
+  { name: "Messages", href: "/admin/messages", icon: MessageSquare },
   { name: "Settings", href: "/admin/settings", icon: Settings },
 ];
 
@@ -32,12 +33,12 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
 function Frame({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { orders, ready, error, refresh, unreadMessages, integrations } = useAdmin();
+  const { pendingOrders, ready, error, refresh, unreadMessages, integrations } = useAdmin();
   const [open, setOpen] = useState(false);
 
   useEffect(() => setOpen(false), [pathname]);
 
-  const pending = orders.filter((o) => o.status === "PENDING").length;
+  const pending = pendingOrders;
   const logout = async () => {
     await api("/api/admin/logout", { method: "POST" }).catch(() => {});
     router.push("/admin/login");
@@ -46,8 +47,8 @@ function Frame({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex h-screen overflow-hidden">
-      {open && <div className="fixed inset-0 z-40 bg-ink/50 md:hidden" onClick={() => setOpen(false)} />}
-      <aside className={cn("fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-ink text-ivory transition-transform md:static md:translate-x-0", open ? "translate-x-0" : "-translate-x-full")}>
+      {open && <div className="fixed inset-0 z-40 bg-ink/50 lg:hidden" onClick={() => setOpen(false)} />}
+      <aside className={cn("fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-ink text-ivory transition-transform lg:static lg:translate-x-0", open ? "translate-x-0" : "-translate-x-full")}>
         <div className="flex h-16 items-center justify-between border-b border-ivory/10 px-5">
           <Link href="/admin" className="flex items-center gap-2.5">
             <Image src="/logo.png" alt="" width={36} height={36} className="rounded-full" />
@@ -56,7 +57,7 @@ function Frame({ children }: { children: React.ReactNode }) {
               <span className="text-[10px] uppercase tracking-[0.3em] text-gold-mid">Admin</span>
             </span>
           </Link>
-          <button className="md:hidden" onClick={() => setOpen(false)} aria-label="Close menu"><X className="h-5 w-5" /></button>
+          <button className="lg:hidden" onClick={() => setOpen(false)} aria-label="Close menu"><X className="h-5 w-5" /></button>
         </div>
         <nav className="flex-1 space-y-1 overflow-y-auto p-3">
           {NAV.map((n) => {
@@ -66,7 +67,7 @@ function Frame({ children }: { children: React.ReactNode }) {
                 <n.icon className={cn("h-[18px] w-[18px]", active && "text-gold-mid")} />
                 {n.name}
                 {n.name === "Orders" && pending > 0 && <span className="ml-auto rounded-full bg-gold px-2 py-0.5 text-[10px] font-semibold text-ink">{pending}</span>}
-                {n.name === "Settings" && unreadMessages > 0 && <span className="ml-auto rounded-full bg-ivory/15 px-2 py-0.5 text-[10px]">{unreadMessages} msg</span>}
+                {n.name === "Messages" && unreadMessages > 0 && <span className="ml-auto rounded-full bg-gold px-2 py-0.5 text-[10px] font-semibold text-ink">{unreadMessages}</span>}
               </Link>
             );
           })}
@@ -78,15 +79,15 @@ function Frame({ children }: { children: React.ReactNode }) {
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-16 shrink-0 items-center justify-between border-b border-line bg-ivory px-4 md:px-8">
-          <button className="md:hidden" onClick={() => setOpen(true)} aria-label="Open menu"><Menu className="h-5 w-5" /></button>
-          <p className="hidden text-sm text-muted md:block">Welcome back, <span className="font-medium text-ink">Richa</span></p>
+        <header className="flex h-16 shrink-0 items-center justify-between border-b border-line bg-ivory px-4 lg:px-8">
+          <button className="lg:hidden" onClick={() => setOpen(true)} aria-label="Open menu"><Menu className="h-5 w-5" /></button>
+          <p className="hidden text-sm text-muted lg:block">Welcome back, <span className="font-medium text-ink">Richa</span></p>
           <div className="flex items-center gap-3">
             {!integrations.razorpay && <span title="Razorpay keys are not set: online payments run in test (mock) mode" className="hidden rounded-full border border-gold-light bg-cream px-3 py-1 text-[11px] font-medium uppercase tracking-wider text-gold-deep sm:block">Payments: test mode</span>}
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-ink font-serif text-ivory">R</div>
           </div>
         </header>
-        <main className="flex-1 overflow-y-auto p-4 md:p-8">
+        <main className="flex-1 overflow-y-auto p-4 lg:p-8">
           {!ready ? (
             <div className="flex h-64 items-center justify-center text-sm text-muted">Loading…</div>
           ) : error ? (

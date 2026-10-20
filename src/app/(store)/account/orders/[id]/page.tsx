@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { use, useState } from "react";
+import { use, useCallback, useEffect, useState } from "react";
 import { Check } from "lucide-react";
-import { useMyOrders } from "@/lib/client/hooks";
+import type { Order } from "@/types/shop";
 import { api } from "@/lib/client/api";
 import { payForOrder } from "@/lib/client/pay";
 import { useToast } from "@/context/ToastContext";
@@ -14,13 +14,19 @@ const STEPS = ["PENDING", "CONFIRMED", "SHIPPED", "DELIVERED"] as const;
 
 export default function OrderDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const { orders, reload } = useMyOrders();
   const { showToast } = useToast();
+  const [o, setO] = useState<Order | null | undefined>(undefined); // undefined = loading, null = not found
   const [busy, setBusy] = useState(false);
 
-  if (!orders) return <p className="text-muted">Loading…</p>;
-  const o = orders.find((x) => x.id === id);
-  if (!o)
+  const load = useCallback(() => {
+    api<{ order: Order }>(`/api/orders/${encodeURIComponent(id)}`)
+      .then((r) => setO(r.order))
+      .catch(() => setO(null));
+  }, [id]);
+  useEffect(load, [load]);
+
+  if (o === undefined) return <p className="text-muted">Loading…</p>;
+  if (o === null)
     return (
       <p className="text-muted">
         Order not found. <Link href="/account/orders" className="underline">Back to orders</Link>
@@ -36,7 +42,7 @@ export default function OrderDetail({ params }: { params: Promise<{ id: string }
     try {
       await api(`/api/account/orders/${encodeURIComponent(o.id)}/cancel`, { method: "POST" });
       showToast("Order cancelled");
-      reload();
+      load();
     } catch (e) {
       showToast(e instanceof Error ? e.message : "Could not cancel the order");
     } finally {
@@ -48,7 +54,7 @@ export default function OrderDetail({ params }: { params: Promise<{ id: string }
     setBusy(true);
     try {
       if (await payForOrder(o.id)) showToast("Payment received — thank you!");
-      reload();
+      load();
     } catch (e) {
       showToast(e instanceof Error ? e.message : "Payment could not be completed");
     } finally {

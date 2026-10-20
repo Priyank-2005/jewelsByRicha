@@ -1,34 +1,47 @@
 "use client";
 
 import Link from "next/link";
-import { use, useEffect, useState } from "react";
+import { use, useCallback, useEffect, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useAdmin } from "@/context/AdminContext";
 import { useToast } from "@/context/ToastContext";
+import { api } from "@/lib/client/api";
 import { Field, PageHeader } from "@/components/admin/ui";
 import { StatusBadge } from "@/components/ui/StatusBadge";
-import type { OrderStatus } from "@/types/shop";
+import type { Order, OrderStatus } from "@/types/shop";
 import { formatDate, formatPrice } from "@/lib/utils";
 
 const STATUSES: OrderStatus[] = ["PENDING", "CONFIRMED", "SHIPPED", "DELIVERED", "CANCELLED"];
 
 export default function AdminOrderDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const { orders, updateOrder } = useAdmin();
+  const { updateOrder } = useAdmin();
   const { showToast } = useToast();
-  const o = orders.find((x) => x.id === id);
-  const [tracking, setTracking] = useState(o?.trackingNumber ?? "");
+  const [o, setO] = useState<Order | null | undefined>(undefined);
+  const [tracking, setTracking] = useState("");
   const [busy, setBusy] = useState(false);
-  useEffect(() => setTracking(o?.trackingNumber ?? ""), [o?.trackingNumber]);
 
-  if (!o) return <p className="text-muted">Order not found. <Link href="/admin/orders" className="underline">Back to orders</Link></p>;
+  const load = useCallback(() => {
+    api<{ order: Order }>(`/api/admin/orders/${encodeURIComponent(id)}`)
+      .then((r) => {
+        setO(r.order);
+        setTracking(r.order.trackingNumber ?? "");
+      })
+      .catch(() => setO(null));
+  }, [id]);
+  useEffect(load, [load]);
+
+  if (o === undefined) return <p className="text-muted">Loading…</p>;
+  if (o === null) return <p className="text-muted">Order not found. <Link href="/admin/orders" className="underline">Back to orders</Link></p>;
   const cancelled = o.status === "CANCELLED";
 
-  const run = async (patch: { status?: OrderStatus; trackingNumber?: string | null }, ok: string) => {
+  const run = async (patch: { status?: OrderStatus; trackingNumber?: string | null }, okMsg: string) => {
     setBusy(true);
     try {
-      await updateOrder(o.id, patch);
-      showToast(ok);
+      const next = await updateOrder(o.id, patch);
+      setO(next);
+      setTracking(next.trackingNumber ?? "");
+      showToast(okMsg);
     } catch (e) {
       showToast(e instanceof Error ? e.message : "Could not update the order");
     } finally {

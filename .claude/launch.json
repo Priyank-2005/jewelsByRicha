@@ -1,6 +1,7 @@
 {
   "version": "0.0.1",
   "configurations": [
-    { "name": "jewels-dev", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev"], "port": 3010 }
+    { "name": "jewels-dev", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev"], "port": 3010 },
+    { "name": "jewels-prod", "runtimeExecutable": "npm", "runtimeArgs": ["run", "start", "--", "-p", "3011"], "port": 3011 }
   ]
 }
