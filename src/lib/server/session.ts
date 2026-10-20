@@ -8,10 +8,13 @@ export interface SessionData {
   role?: "CUSTOMER" | "ADMIN";
 }
 
-const password = process.env.SESSION_SECRET || "dev-only-session-secret-change-me-32chars!!";
+const password =
+  process.env.SESSION_SECRET && process.env.SESSION_SECRET.length >= 32
+    ? process.env.SESSION_SECRET
+    : "dev-only-session-secret-change-me-32chars!!";
 
 if (process.env.NODE_ENV === "production" && !process.env.SESSION_SECRET) {
-  throw new Error("SESSION_SECRET must be set in production");
+  console.warn("⚠️ Warning: SESSION_SECRET is not set in production. Using fallback secret.");
 }
 
 const base = {

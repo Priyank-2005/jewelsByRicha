@@ -203,7 +203,7 @@ export default function HomePage() {
       <section
         className="relative isolate overflow-hidden border-t border-[#ebd8cc] border-b border-[#362923] py-20 md:py-32"
         style={{
-          background: "linear-gradient(180deg, #fdf8f4 0%, #faf1ea 36%, #251813 54%, #120c09 100%)",
+          background: "linear-gradient(180deg, #faf3ec 0%, #faf3ec 42%, #18110e 48%, #120c09 100%)",
         }}
       >
         {/* Light Zone: Champagne Gold Bloom behind Title */}
@@ -263,3 +263,4 @@ export default function HomePage() {
     </>
   );
 }
+
