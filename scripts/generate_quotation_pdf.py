@@ -290,9 +290,9 @@ def build_pdf(filename="docs/Jewels_by_Richa_Quotation_and_Features.pdf"):
 
     pricing_data = [
         [
-            Paragraph("<b>Payment Stage</b>", table_hdr),
+            Paragraph("<b>Payment Stage / Service</b>", table_hdr),
             Paragraph("<b>Deliverable Scope</b>", table_hdr),
-            Paragraph("<b>Status</b>", table_hdr),
+            Paragraph("<b>Status / Timing</b>", table_hdr),
             Paragraph("<b>Amount (INR)</b>", table_hdr)
         ],
         [
@@ -312,6 +312,18 @@ def build_pdf(filename="docs/Jewels_by_Richa_Quotation_and_Features.pdf"):
             Paragraph("<b>Full custom storefront, admin panel, PostgreSQL backend & 100% code ownership</b>", table_cell_bold),
             Paragraph("<b>Fixed</b>", table_cell_bold),
             Paragraph("<font color='#1A1411'><b>Rs. 13,000</b></font>", table_cell_bold)
+        ],
+        [
+            Paragraph("<b>Post-Launch Assistance</b>", table_cell_bold),
+            Paragraph("<b>2 Weeks Free Technical Assistance:</b> Operational support, bug fixes & admin guidance following go-live", table_cell),
+            Paragraph("<font color='#1E6B37'><b>Included (Free)</b></font>", table_cell_bold),
+            Paragraph("<b>Rs. 0</b>", table_cell_bold)
+        ],
+        [
+            Paragraph("<b>Post-Assistance Maintenance</b>", table_cell_bold),
+            Paragraph("Ongoing technical maintenance, future updates, or extended support beyond initial 2 weeks", table_cell),
+            Paragraph("<b>Upon Request</b>", table_cell_bold),
+            Paragraph("Separate cost", table_cell)
         ]
     ]
 
@@ -321,12 +333,13 @@ def build_pdf(filename="docs/Jewels_by_Richa_Quotation_and_Features.pdf"):
         ('BOX', (0, 0), (-1, -1), 0.5, c_line),
         ('INNERGRID', (0, 0), (-1, -1), 0.5, c_line),
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-        ('TOPPADDING', (0, 0), (-1, -1), 4),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
+        ('TOPPADDING', (0, 0), (-1, -1), 3),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 3),
         ('LEFTPADDING', (0, 0), (-1, -1), 5),
         ('RIGHTPADDING', (0, 0), (-1, -1), 5),
         ('BACKGROUND', (0, 1), (-1, 1), c_bg_light),
         ('BACKGROUND', (0, 3), (-1, 3), c_card_bg),
+        ('BACKGROUND', (0, 4), (-1, 4), c_bg_light),
     ]))
     content.append(pricing_table)
     content.append(Spacer(1, 8))
