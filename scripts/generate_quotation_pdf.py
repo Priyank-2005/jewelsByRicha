@@ -320,10 +320,10 @@ def build_pdf(filename="docs/Jewels_by_Richa_Quotation_and_Features.pdf"):
             Paragraph("<b>Rs. 0</b>", table_cell_bold)
         ],
         [
-            Paragraph("<b>Post-Assistance Maintenance</b>", table_cell_bold),
-            Paragraph("Ongoing technical maintenance, future updates, or extended support beyond initial 2 weeks", table_cell),
-            Paragraph("<b>Upon Request</b>", table_cell_bold),
-            Paragraph("Separate cost", table_cell)
+            Paragraph("<b>Post-Assistance Maintenance</b><br/><i>(Optional)</i>", table_cell_bold),
+            Paragraph("Ongoing technical maintenance, updates & bug support after initial 2 weeks. <b>Completely optional (only if needed by client, available up to 1 year).</b>", table_cell),
+            Paragraph("<b>Optional (If needed)</b>", table_cell_bold),
+            Paragraph("<b>Rs. 2,000</b> / month", table_cell_bold)
         ]
     ]
 
