@@ -1,5 +1,5 @@
 """
-Jewels by Richa — Project Quotation & Comprehensive Feature Specification PDF Generator
+Jewels by Richa — Project Quotation & Comprehensive Feature Specification (Rs. 13,000)
 """
 
 import os
@@ -7,7 +7,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import (
-    SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image, KeepTogether, HRFlowable
+    SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image, PageBreak, HRFlowable
 )
 from reportlab.pdfgen import canvas
 
@@ -35,20 +35,20 @@ class NumberedCanvas(canvas.Canvas):
         
         # Header (pages after page 1)
         if self._pageNumber > 1:
-            self.drawString(36, 805, "JEWELS BY RICHA  |  Project Quotation & Feature Specification")
-            self.drawRightString(A4[0] - 36, 805, "Confidential Proposal")
+            self.drawString(36, 810, "JEWELS BY RICHA  |  Project Quotation & Feature Specification")
+            self.drawRightString(A4[0] - 36, 810, "Commercial Proposal")
             self.setStrokeColor(colors.HexColor("#D8C8B5"))
             self.setLineWidth(0.5)
-            self.line(36, 798, A4[0] - 36, 798)
+            self.line(36, 804, A4[0] - 36, 804)
 
         # Footer (all pages)
         self.setStrokeColor(colors.HexColor("#D8C8B5"))
         self.setLineWidth(0.5)
-        self.line(36, 42, A4[0] - 36, 42)
+        self.line(36, 38, A4[0] - 36, 38)
         
-        self.drawString(36, 30, "Jewels by Richa — Anti-Tarnish & Waterproof Luxury Jewellery")
+        self.drawString(36, 26, "Jewels by Richa — Anti-Tarnish & Waterproof Luxury Jewellery")
         page_text = f"Page {self._pageNumber} of {page_count}"
-        self.drawRightString(A4[0] - 36, 30, page_text)
+        self.drawRightString(A4[0] - 36, 26, page_text)
         self.restoreState()
 
 
@@ -59,8 +59,8 @@ def build_pdf(filename="docs/Jewels_by_Richa_Quotation_and_Features.pdf"):
         pagesize=A4,
         leftMargin=36,
         rightMargin=36,
-        topMargin=46,
-        bottomMargin=50
+        topMargin=40,
+        bottomMargin=46
     )
 
     content = []
@@ -79,96 +79,95 @@ def build_pdf(filename="docs/Jewels_by_Richa_Quotation_and_Features.pdf"):
     title_style = ParagraphStyle(
         'DocTitle',
         fontName='Helvetica-Bold',
-        fontSize=20,
-        leading=24,
+        fontSize=18,
+        leading=22,
         textColor=c_ink
     )
     subtitle_style = ParagraphStyle(
         'DocSubtitle',
         fontName='Helvetica',
-        fontSize=11,
-        leading=15,
+        fontSize=10,
+        leading=14,
         textColor=c_gold_dark
     )
     h1_style = ParagraphStyle(
         'SectionH1',
         fontName='Helvetica-Bold',
-        fontSize=12.5,
-        leading=16,
+        fontSize=11.5,
+        leading=15,
         textColor=c_ink,
-        spaceBefore=10,
-        spaceAfter=5
+        spaceBefore=8,
+        spaceAfter=4
     )
     body_style = ParagraphStyle(
         'DocBody',
         fontName='Helvetica',
-        fontSize=8.5,
-        leading=12.5,
+        fontSize=8,
+        leading=11.5,
         textColor=c_ink
     )
     table_cell = ParagraphStyle(
         'TableCell',
         fontName='Helvetica',
-        fontSize=8.2,
-        leading=11.2,
+        fontSize=7.8,
+        leading=10.8,
         textColor=c_ink
     )
     table_cell_bold = ParagraphStyle(
         'TableCellBold',
         fontName='Helvetica-Bold',
-        fontSize=8.2,
-        leading=11.2,
+        fontSize=7.8,
+        leading=10.8,
         textColor=c_ink
     )
     table_hdr = ParagraphStyle(
         'TableHdr',
         fontName='Helvetica-Bold',
-        fontSize=8.5,
-        leading=11.5,
+        fontSize=8,
+        leading=11,
         textColor=colors.white
     )
 
     # 1. HEADER & COVER CARD
     logo_path = "public/logo.png"
-    logo_img = Image(logo_path, width=52, height=52) if os.path.exists(logo_path) else Paragraph("<b>JR</b>", title_style)
+    logo_img = Image(logo_path, width=48, height=48) if os.path.exists(logo_path) else Paragraph("<b>JR</b>", title_style)
 
     header_table_data = [
         [
             logo_img,
             [
                 Paragraph("JEWELS BY RICHA", title_style),
-                Paragraph("<b>Commercial Quotation & Technical Feature Specification</b>", subtitle_style),
-                Paragraph("Anti-Tarnish · Waterproof Luxury E-Commerce Platform & Admin Suite", body_style)
+                Paragraph("<b>Commercial Project Quotation & Technical Feature Specification</b>", subtitle_style),
+                Paragraph("Custom Anti-Tarnish E-Commerce Platform & Full Admin Management Suite", body_style)
             ],
             [
                 Paragraph("<b>Date:</b> October 2026", body_style),
-                Paragraph("<b>Version:</b> 1.0 (Final)", body_style),
                 Paragraph("<b>Client:</b> Richa Marwaha Jain", body_style),
                 Paragraph("<b>Prepared by:</b> Priyank Bohra", body_style),
+                Paragraph("<b>Total Investment:</b> Rs. 13,000", body_style),
             ]
         ]
     ]
 
-    header_table = Table(header_table_data, colWidths=[62, 305, 155])
+    header_table = Table(header_table_data, colWidths=[56, 316, 150])
     header_table.setStyle(TableStyle([
         ('VALIGN', (0, 0), (-1, -1), 'TOP'),
         ('LEFTPADDING', (0, 0), (-1, -1), 0),
         ('RIGHTPADDING', (0, 0), (-1, -1), 0),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 2),
     ]))
     content.append(header_table)
-    content.append(HRFlowable(width="100%", thickness=1.5, color=c_gold, spaceBefore=4, spaceAfter=10))
+    content.append(HRFlowable(width="100%", thickness=1.2, color=c_gold, spaceBefore=4, spaceAfter=6))
 
-    # 2. EXECUTIVE ARCHITECTURE OVERVIEW
-    content.append(Paragraph("1. Technology Stack & Enterprise Architecture", h1_style))
+    # 2. ARCHITECTURE OVERVIEW
+    content.append(Paragraph("1. Technology Stack & Architecture (Zero Monthly Platform Fees)", h1_style))
     content.append(Paragraph(
-        "This project delivers an enterprise-tier, custom-engineered direct-to-consumer (D2C) e-commerce system built from "
-        "the ground up specifically for <b>Jewels by Richa</b>. Unlike rented templates (Shopify/WooCommerce), this custom "
-        "architecture incurs <b>zero monthly app subscription fees</b>, delivers sub-second load times, and gives the brand 100% ownership "
-        "of all data, business logic, and intellectual property.",
+        "A 100% custom-engineered direct-to-consumer (D2C) e-commerce system built specifically for <b>Jewels by Richa</b>. "
+        "Unlike Shopify or WooCommerce which require recurring monthly subscription fees and paid plugins, this custom "
+        "architecture incurs <b>zero monthly app fees</b>, ensures lightning-fast speeds, and delivers full ownership of code and data.",
         body_style
     ))
-    content.append(Spacer(1, 5))
+    content.append(Spacer(1, 4))
 
     tech_table_data = [
         [
@@ -181,11 +180,11 @@ def build_pdf(filename="docs/Jewels_by_Richa_Quotation_and_Features.pdf"):
         ],
         [
             Paragraph("<b>Authentication:</b> iron-session (Encrypted, HttpOnly)", table_cell),
-            Paragraph("<b>Media & Storage:</b> Cloudinary CDN + Auto-compression", table_cell),
+            Paragraph("<b>Media:</b> Cloudinary CDN + Auto WebP compression", table_cell),
         ],
         [
             Paragraph("<b>Security:</b> 3-Layer Rate Limiting & CSRF Shield", table_cell),
-            Paragraph("<b>Email Engine:</b> Nodemailer Transactional HTML Engine", table_cell),
+            Paragraph("<b>Emails:</b> Nodemailer Transactional HTML Engine", table_cell),
         ]
     ]
     tech_table = Table(tech_table_data, colWidths=[260, 260])
@@ -193,26 +192,20 @@ def build_pdf(filename="docs/Jewels_by_Richa_Quotation_and_Features.pdf"):
         ('BACKGROUND', (0, 0), (-1, -1), c_bg_light),
         ('BOX', (0, 0), (-1, -1), 0.5, c_line),
         ('INNERGRID', (0, 0), (-1, -1), 0.5, c_line),
-        ('TOPPADDING', (0, 0), (-1, -1), 3.5),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 3.5),
-        ('LEFTPADDING', (0, 0), (-1, -1), 7),
-        ('RIGHTPADDING', (0, 0), (-1, -1), 7),
+        ('TOPPADDING', (0, 0), (-1, -1), 2.5),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 2.5),
+        ('LEFTPADDING', (0, 0), (-1, -1), 6),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 6),
     ]))
     content.append(tech_table)
-    content.append(Spacer(1, 8))
+    content.append(Spacer(1, 6))
 
     # 3. DETAILED SCOPE BREAKDOWN (FEATURES.MD MAPPING)
     content.append(Paragraph("2. Comprehensive Feature Scope (Storefront & Admin Suite)", h1_style))
-    content.append(Paragraph(
-        "Below is the complete itemized breakdown of features built and delivered as defined in the technical specification:",
-        body_style
-    ))
-    content.append(Spacer(1, 5))
-
     features_data = [
         [
             Paragraph("<b>Subsystem</b>", table_hdr),
-            Paragraph("<b>Delivered Capabilities & Features</b>", table_hdr)
+            Paragraph("<b>Delivered Capabilities & Features (from FEATURES.md)</b>", table_hdr)
         ],
         [
             Paragraph("<b>Storefront & Browsing</b>", table_cell_bold),
@@ -259,7 +252,7 @@ def build_pdf(filename="docs/Jewels_by_Richa_Quotation_and_Features.pdf"):
             )
         ],
         [
-            Paragraph("<b>Security, Performance & SEO</b>", table_cell_bold),
+            Paragraph("<b>Security & Performance</b>", table_cell_bold),
             Paragraph(
                 "• <b>Triple-Layer Rate Limiting:</b> Protection against brute-force logins, bot spam, and checkout floods.<br/>"
                 "• <b>CSRF & Session Security:</b> Encrypted SameSite=Lax httpOnly cookies, bcrypt cost 12 password hashing.<br/>"
@@ -270,27 +263,29 @@ def build_pdf(filename="docs/Jewels_by_Richa_Quotation_and_Features.pdf"):
         ]
     ]
 
-    features_table = Table(features_data, colWidths=[140, 380])
+    features_table = Table(features_data, colWidths=[130, 390])
     features_table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), c_ink),
         ('BOX', (0, 0), (-1, -1), 0.5, c_line),
         ('INNERGRID', (0, 0), (-1, -1), 0.5, c_line),
         ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-        ('TOPPADDING', (0, 0), (-1, -1), 4.5),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 4.5),
-        ('LEFTPADDING', (0, 0), (-1, -1), 6),
-        ('RIGHTPADDING', (0, 0), (-1, -1), 6),
+        ('TOPPADDING', (0, 0), (-1, -1), 3.5),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 3.5),
+        ('LEFTPADDING', (0, 0), (-1, -1), 5),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 5),
     ]))
     content.append(features_table)
-    content.append(Spacer(1, 10))
 
-    # 4. INVESTMENT & QUOTATION BREAKDOWN
-    content.append(Paragraph("3. Commercial Quotation & Investment Schedule", h1_style))
+    # Clean PageBreak so Page 2 starts with Commercial Quotation
+    content.append(PageBreak())
+
+    # 4. INVESTMENT & QUOTATION BREAKDOWN (Rs. 13,000)
+    content.append(Paragraph("3. Commercial Quotation & Investment Breakdown", h1_style))
     content.append(Paragraph(
-        "The project has been planned as an all-inclusive, end-to-end turnkey solution covering design, engineering, integrations, and deployment:",
+        "Complete end-to-end turnkey development, integrations, and deployment package for Jewels by Richa:",
         body_style
     ))
-    content.append(Spacer(1, 5))
+    content.append(Spacer(1, 6))
 
     pricing_data = [
         [
@@ -300,48 +295,33 @@ def build_pdf(filename="docs/Jewels_by_Richa_Quotation_and_Features.pdf"):
         ],
         [
             Paragraph("<b>Module 1: Luxury Storefront & UI/UX</b>", table_cell_bold),
-            Paragraph("Custom gold/ivory theme, mobile-responsive layout, mega-menus, product detail page, search, cart & wishlist.", table_cell),
-            Paragraph("Rs. 28,000", table_cell_bold)
+            Paragraph("Custom theme, mobile-responsive layout, mega-menus, product detail page, search, cart & wishlist.", table_cell),
+            Paragraph("Rs. 4,500", table_cell_bold)
         ],
         [
             Paragraph("<b>Module 2: Checkout, Payment & Coupon Engine</b>", table_cell_bold),
             Paragraph("Razorpay gateway (UPI/Cards), Cash on Delivery, atomic stock lock, server pricing, coupon validation.", table_cell),
-            Paragraph("Rs. 18,000", table_cell_bold)
+            Paragraph("Rs. 2,500", table_cell_bold)
         ],
         [
             Paragraph("<b>Module 3: Customer Accounts & Notification Engine</b>", table_cell_bold),
             Paragraph("Email OTP verification, self-service tracking, address book, automated HTML email triggers.", table_cell),
-            Paragraph("Rs. 14,000", table_cell_bold)
+            Paragraph("Rs. 2,000", table_cell_bold)
         ],
         [
             Paragraph("<b>Module 4: Enterprise Admin Management Suite</b>", table_cell_bold),
             Paragraph("Dashboard analytics, product catalog manager, photo upload, order fulfillment pipeline, coupon & settings controller.", table_cell),
-            Paragraph("Rs. 22,000", table_cell_bold)
+            Paragraph("Rs. 2,500", table_cell_bold)
         ],
         [
-            Paragraph("<b>Module 5: Database, Security & SEO Infrastructure</b>", table_cell_bold),
-            Paragraph("PostgreSQL setup, Prisma ORM, 3-layer rate limiting, automated stock release crons, JSON-LD rich snippets.", table_cell),
-            Paragraph("Rs. 13,000", table_cell_bold)
+            Paragraph("<b>Module 5: Database, Security, SEO & Deployment</b>", table_cell_bold),
+            Paragraph("PostgreSQL setup, Prisma ORM, 3-layer rate limiting, automated stock release crons, JSON-LD, domain launch.", table_cell),
+            Paragraph("Rs. 1,500", table_cell_bold)
         ],
         [
-            Paragraph("<b>Module 6: Deployment, Smoke Testing & Launch</b>", table_cell_bold),
-            Paragraph("Automated 50+ smoke test suite, production deployment on Vercel + Neon, domain configuration, handover.", table_cell),
-            Paragraph("Rs. 5,000", table_cell_bold)
-        ],
-        [
-            Paragraph("<b>Total Project Scope Value</b>", table_cell_bold),
-            Paragraph("Cumulative itemized value for standalone modules", table_cell),
-            Paragraph("<b>Rs. 1,00,000</b>", table_cell_bold)
-        ],
-        [
-            Paragraph("<b>Turnkey Package Discount</b>", table_cell_bold),
-            Paragraph("Special package concession for complete end-to-end platform commitment", table_cell),
-            Paragraph("<font color='#9C721D'><b>- Rs. 15,000</b></font>", table_cell_bold)
-        ],
-        [
-            Paragraph("<b>FINAL NET INVESTMENT</b>", table_cell_bold),
-            Paragraph("<b>Full bespoke platform delivery with complete codebase ownership</b>", table_cell_bold),
-            Paragraph("<font color='#1A1411'><b>Rs. 85,000</b></font>", table_cell_bold)
+            Paragraph("<b>TOTAL PROJECT INVESTMENT</b>", table_cell_bold),
+            Paragraph("<b>Complete bespoke platform delivery with 100% codebase ownership</b>", table_cell_bold),
+            Paragraph("<font color='#1A1411'><b>Rs. 13,000</b></font>", table_cell_bold)
         ]
     ]
 
@@ -351,75 +331,66 @@ def build_pdf(filename="docs/Jewels_by_Richa_Quotation_and_Features.pdf"):
         ('BOX', (0, 0), (-1, -1), 0.5, c_line),
         ('INNERGRID', (0, 0), (-1, -1), 0.5, c_line),
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-        ('TOPPADDING', (0, 0), (-1, -1), 4),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
+        ('TOPPADDING', (0, 0), (-1, -1), 5),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 5),
         ('LEFTPADDING', (0, 0), (-1, -1), 6),
         ('RIGHTPADDING', (0, 0), (-1, -1), 6),
-        ('BACKGROUND', (0, 7), (-1, 7), c_bg_light),
-        ('BACKGROUND', (0, 8), (-1, 8), c_bg_light),
-        ('BACKGROUND', (0, 9), (-1, 9), c_card_bg),
+        ('BACKGROUND', (0, 6), (-1, 6), c_card_bg),
     ]))
     content.append(pricing_table)
-    content.append(Spacer(1, 10))
+    content.append(Spacer(1, 14))
 
-    # 5. MILESTONE PAYMENT SCHEDULE (Kept together on Page 3)
-    milestone_elements = []
-    milestone_elements.append(Paragraph("4. Milestone Payment Schedule", h1_style))
+    # 5. MILESTONE PAYMENT SCHEDULE
+    content.append(Paragraph("4. Milestone Payment Schedule", h1_style))
     milestone_data = [
         [
             Paragraph("<b>Milestone</b>", table_hdr),
-            Paragraph("<b>Project Phase / Deliverable Trigger</b>", table_hdr),
+            Paragraph("<b>Deliverable Stage</b>", table_hdr),
             Paragraph("<b>Share</b>", table_hdr),
             Paragraph("<b>Amount (INR)</b>", table_hdr)
         ],
         [
             Paragraph("<b>Milestone 1</b>", table_cell_bold),
-            Paragraph("Project Kickoff & Scope Confirmation (Repository setup & architectural baseline)", table_cell),
-            Paragraph("30%", table_cell),
-            Paragraph("Rs. 25,500", table_cell_bold)
+            Paragraph("Project Kickoff & Architectural Baseline", table_cell),
+            Paragraph("40%", table_cell),
+            Paragraph("Rs. 5,200", table_cell_bold)
         ],
         [
             Paragraph("<b>Milestone 2</b>", table_cell_bold),
-            Paragraph("Storefront & Catalog Review (Complete responsive browsing experience & cart)", table_cell),
+            Paragraph("Storefront, Catalog & Admin Suite Functional Review", table_cell),
             Paragraph("30%", table_cell),
-            Paragraph("Rs. 25,500", table_cell_bold)
+            Paragraph("Rs. 3,900", table_cell_bold)
         ],
         [
             Paragraph("<b>Milestone 3</b>", table_cell_bold),
-            Paragraph("Admin Suite & Integration (Razorpay test mode, OTP email engine, admin controls)", table_cell),
+            Paragraph("Final Handover, Production Deployment & Domain Launch", table_cell),
             Paragraph("30%", table_cell),
-            Paragraph("Rs. 25,500", table_cell_bold)
-        ],
-        [
-            Paragraph("<b>Milestone 4</b>", table_cell_bold),
-            Paragraph("Final Launch & Handover (Domain mapping, production database, admin credentials transfer)", table_cell),
-            Paragraph("10%", table_cell),
-            Paragraph("Rs. 8,500", table_cell_bold)
+            Paragraph("Rs. 3,900", table_cell_bold)
         ],
     ]
-    milestone_table = Table(milestone_data, colWidths=[75, 295, 50, 100])
+    milestone_table = Table(milestone_data, colWidths=[80, 280, 60, 100])
     milestone_table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), c_ink),
         ('BOX', (0, 0), (-1, -1), 0.5, c_line),
         ('INNERGRID', (0, 0), (-1, -1), 0.5, c_line),
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-        ('TOPPADDING', (0, 0), (-1, -1), 4.5),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 4.5),
+        ('TOPPADDING', (0, 0), (-1, -1), 5),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 5),
         ('LEFTPADDING', (0, 0), (-1, -1), 6),
         ('RIGHTPADDING', (0, 0), (-1, -1), 6),
     ]))
-    milestone_elements.append(milestone_table)
-    milestone_elements.append(Spacer(1, 12))
+    content.append(milestone_table)
+    content.append(Spacer(1, 14))
 
-    # 6. WARRANTY & CLIENT PREREQUISITES
-    milestone_elements.append(Paragraph("5. Support, Warranty & Client Prerequisites", h1_style))
-    milestone_elements.append(Paragraph(
-        "• <b>30 Days Hypercare Support:</b> Comprehensive post-launch warranty covering bug fixes, performance monitoring, and staff walkthroughs at no additional charge.<br/>"
-        "• <b>Client Prerequisites (Phase 10 Go-Live):</b> To activate live online payments, media uploads, and email alerts, the client supplies API credentials for Razorpay, Cloudinary, SMTP, and domain DNS access as outlined in the <i>Information & Assets Checklist</i>.<br/>"
-        "• <b>Zero Platform Subscriptions:</b> Eliminates Shopify monthly app tiers and plugin licenses, keeping operational costs strictly to base hosting and standard payment gateway processing fees.",
+    # 6. SUPPORT & PREREQUISITES
+    content.append(Paragraph("5. Support, Warranty & Client Prerequisites", h1_style))
+    content.append(Paragraph(
+        "• <b>30 Days Post-Launch Support:</b> Comprehensive warranty covering bug fixes, technical adjustments, and staff walkthrough.<br/>"
+        "• <b>Client Prerequisites:</b> Client provides account keys for Razorpay, Cloudinary, and SMTP email as outlined in the checklist.<br/>"
+        "• <b>Zero Ongoing Platform Subscription:</b> No recurring platform fees (unlike Shopify monthly app subscriptions).",
         body_style
     ))
-    milestone_elements.append(Spacer(1, 16))
+    content.append(Spacer(1, 18))
 
     # 7. SIGN-OFF BLOCK
     sign_data = [
@@ -437,14 +408,12 @@ def build_pdf(filename="docs/Jewels_by_Richa_Quotation_and_Features.pdf"):
         ('BOX', (0, 0), (-1, -1), 0.5, c_line),
         ('INNERGRID', (0, 0), (-1, -1), 0.5, c_line),
         ('BACKGROUND', (0, 0), (-1, -1), c_bg_light),
-        ('TOPPADDING', (0, 0), (-1, -1), 7),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 7),
+        ('TOPPADDING', (0, 0), (-1, -1), 6),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
         ('LEFTPADDING', (0, 0), (-1, -1), 8),
         ('RIGHTPADDING', (0, 0), (-1, -1), 8),
     ]))
-    milestone_elements.append(sign_table)
-
-    content.append(KeepTogether(milestone_elements))
+    content.append(sign_table)
 
     # Build PDF
     doc.build(content, canvasmaker=NumberedCanvas)
