@@ -1,5 +1,7 @@
 """
-Jewels by Richa — Project Quotation & Comprehensive Feature Specification (Rs. 13,000)
+Jewels by Richa — Official Project Quotation & Feature List
+Strictly mapped to FEATURES.md by Priyank Bohra
+Payment Terms: Total Rs. 13,000 (Rs. 2,000 Advance Paid + Rs. 11,000 Upon Live Launch)
 """
 
 import os
@@ -33,10 +35,10 @@ class NumberedCanvas(canvas.Canvas):
         self.setFont("Helvetica", 8)
         self.setFillColor(colors.HexColor("#7A6E63"))
         
-        # Header (pages after page 1)
+        # Header (page 2)
         if self._pageNumber > 1:
             self.drawString(36, 810, "JEWELS BY RICHA  |  Project Quotation & Feature Specification")
-            self.drawRightString(A4[0] - 36, 810, "Commercial Proposal")
+            self.drawRightString(A4[0] - 36, 810, "Prepared by Priyank Bohra")
             self.setStrokeColor(colors.HexColor("#D8C8B5"))
             self.setLineWidth(0.5)
             self.line(36, 804, A4[0] - 36, 804)
@@ -44,11 +46,11 @@ class NumberedCanvas(canvas.Canvas):
         # Footer (all pages)
         self.setStrokeColor(colors.HexColor("#D8C8B5"))
         self.setLineWidth(0.5)
-        self.line(36, 38, A4[0] - 36, 38)
+        self.line(36, 36, A4[0] - 36, 36)
         
-        self.drawString(36, 26, "Jewels by Richa — Anti-Tarnish & Waterproof Luxury Jewellery")
+        self.drawString(36, 24, "Jewels by Richa — Anti-tarnish, waterproof jewellery (jewelsbyricha.in)")
         page_text = f"Page {self._pageNumber} of {page_count}"
-        self.drawRightString(A4[0] - 36, 26, page_text)
+        self.drawRightString(A4[0] - 36, 24, page_text)
         self.restoreState()
 
 
@@ -59,21 +61,21 @@ def build_pdf(filename="docs/Jewels_by_Richa_Quotation_and_Features.pdf"):
         pagesize=A4,
         leftMargin=36,
         rightMargin=36,
-        topMargin=40,
-        bottomMargin=46
+        topMargin=38,
+        bottomMargin=44
     )
 
     content = []
     styles = getSampleStyleSheet()
 
-    # Colors
+    # Brand Colors
     c_gold = colors.HexColor("#9C721D")
     c_gold_dark = colors.HexColor("#7F5A12")
     c_ink = colors.HexColor("#1A1411")
-    c_muted = colors.HexColor("#5A5046")
     c_line = colors.HexColor("#DFCDB9")
     c_bg_light = colors.HexColor("#FDF9F5")
     c_card_bg = colors.HexColor("#F7F1EA")
+    c_green = colors.HexColor("#1E6B37")
 
     # Typography Styles
     title_style = ParagraphStyle(
@@ -85,7 +87,7 @@ def build_pdf(filename="docs/Jewels_by_Richa_Quotation_and_Features.pdf"):
     )
     subtitle_style = ParagraphStyle(
         'DocSubtitle',
-        fontName='Helvetica',
+        fontName='Helvetica-Bold',
         fontSize=10,
         leading=14,
         textColor=c_gold_dark
@@ -93,11 +95,11 @@ def build_pdf(filename="docs/Jewels_by_Richa_Quotation_and_Features.pdf"):
     h1_style = ParagraphStyle(
         'SectionH1',
         fontName='Helvetica-Bold',
-        fontSize=11.5,
-        leading=15,
+        fontSize=11,
+        leading=14,
         textColor=c_ink,
-        spaceBefore=8,
-        spaceAfter=4
+        spaceBefore=7,
+        spaceAfter=3
     )
     body_style = ParagraphStyle(
         'DocBody',
@@ -109,47 +111,47 @@ def build_pdf(filename="docs/Jewels_by_Richa_Quotation_and_Features.pdf"):
     table_cell = ParagraphStyle(
         'TableCell',
         fontName='Helvetica',
-        fontSize=7.8,
-        leading=10.8,
+        fontSize=7.6,
+        leading=10.5,
         textColor=c_ink
     )
     table_cell_bold = ParagraphStyle(
         'TableCellBold',
         fontName='Helvetica-Bold',
-        fontSize=7.8,
-        leading=10.8,
+        fontSize=7.6,
+        leading=10.5,
         textColor=c_ink
     )
     table_hdr = ParagraphStyle(
         'TableHdr',
         fontName='Helvetica-Bold',
-        fontSize=8,
-        leading=11,
+        fontSize=7.8,
+        leading=10.8,
         textColor=colors.white
     )
 
-    # 1. HEADER & COVER CARD
+    # 1. HEADER BLOCK
     logo_path = "public/logo.png"
-    logo_img = Image(logo_path, width=48, height=48) if os.path.exists(logo_path) else Paragraph("<b>JR</b>", title_style)
+    logo_img = Image(logo_path, width=46, height=46) if os.path.exists(logo_path) else Paragraph("<b>JR</b>", title_style)
 
     header_table_data = [
         [
             logo_img,
             [
                 Paragraph("JEWELS BY RICHA", title_style),
-                Paragraph("<b>Commercial Project Quotation & Technical Feature Specification</b>", subtitle_style),
-                Paragraph("Custom Anti-Tarnish E-Commerce Platform & Full Admin Management Suite", body_style)
+                Paragraph("Website & Admin Panel — Quotation & Technical Feature List", subtitle_style),
+                Paragraph("Stack: Next.js 16 · React 19 · PostgreSQL + Prisma · Tailwind CSS v4 · Razorpay · Cloudinary · Nodemailer", body_style)
             ],
             [
-                Paragraph("<b>Date:</b> October 2026", body_style),
                 Paragraph("<b>Client:</b> Richa Marwaha Jain", body_style),
                 Paragraph("<b>Prepared by:</b> Priyank Bohra", body_style),
-                Paragraph("<b>Total Investment:</b> Rs. 13,000", body_style),
+                Paragraph("<b>Date:</b> October 2026", body_style),
+                Paragraph("<b>Total:</b> Rs. 13,000", body_style),
             ]
         ]
     ]
 
-    header_table = Table(header_table_data, colWidths=[56, 316, 150])
+    header_table = Table(header_table_data, colWidths=[52, 320, 150])
     header_table.setStyle(TableStyle([
         ('VALIGN', (0, 0), (-1, -1), 'TOP'),
         ('LEFTPADDING', (0, 0), (-1, -1), 0),
@@ -159,243 +161,192 @@ def build_pdf(filename="docs/Jewels_by_Richa_Quotation_and_Features.pdf"):
     content.append(header_table)
     content.append(HRFlowable(width="100%", thickness=1.2, color=c_gold, spaceBefore=4, spaceAfter=6))
 
-    # 2. ARCHITECTURE OVERVIEW
-    content.append(Paragraph("1. Technology Stack & Architecture (Zero Monthly Platform Fees)", h1_style))
-    content.append(Paragraph(
-        "A 100% custom-engineered direct-to-consumer (D2C) e-commerce system built specifically for <b>Jewels by Richa</b>. "
-        "Unlike Shopify or WooCommerce which require recurring monthly subscription fees and paid plugins, this custom "
-        "architecture incurs <b>zero monthly app fees</b>, ensures lightning-fast speeds, and delivers full ownership of code and data.",
-        body_style
-    ))
-    content.append(Spacer(1, 4))
+    # 2. STOREFRONT SPECIFICATION (DIRECT FROM FEATURES.MD)
+    content.append(Paragraph("1. Storefront Features (Customer Website — As specified in FEATURES.md)", h1_style))
 
-    tech_table_data = [
+    storefront_data = [
         [
-            Paragraph("<b>Storefront:</b> Next.js 16 (App Router) & React 19", table_cell),
-            Paragraph("<b>Database:</b> PostgreSQL via Prisma ORM", table_cell),
+            Paragraph("<b>Area</b>", table_hdr),
+            Paragraph("<b>Exact Features Built (from FEATURES.md)</b>", table_hdr)
         ],
         [
-            Paragraph("<b>Styling:</b> Tailwind CSS v4 (Custom Luxury Theme)", table_cell),
-            Paragraph("<b>Payments:</b> Razorpay UPI, Cards, Netbanking + COD", table_cell),
-        ],
-        [
-            Paragraph("<b>Authentication:</b> iron-session (Encrypted, HttpOnly)", table_cell),
-            Paragraph("<b>Media:</b> Cloudinary CDN + Auto WebP compression", table_cell),
-        ],
-        [
-            Paragraph("<b>Security:</b> 3-Layer Rate Limiting & CSRF Shield", table_cell),
-            Paragraph("<b>Emails:</b> Nodemailer Transactional HTML Engine", table_cell),
-        ]
-    ]
-    tech_table = Table(tech_table_data, colWidths=[260, 260])
-    tech_table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, -1), c_bg_light),
-        ('BOX', (0, 0), (-1, -1), 0.5, c_line),
-        ('INNERGRID', (0, 0), (-1, -1), 0.5, c_line),
-        ('TOPPADDING', (0, 0), (-1, -1), 2.5),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 2.5),
-        ('LEFTPADDING', (0, 0), (-1, -1), 6),
-        ('RIGHTPADDING', (0, 0), (-1, -1), 6),
-    ]))
-    content.append(tech_table)
-    content.append(Spacer(1, 6))
-
-    # 3. DETAILED SCOPE BREAKDOWN (FEATURES.MD MAPPING)
-    content.append(Paragraph("2. Comprehensive Feature Scope (Storefront & Admin Suite)", h1_style))
-    features_data = [
-        [
-            Paragraph("<b>Subsystem</b>", table_hdr),
-            Paragraph("<b>Delivered Capabilities & Features (from FEATURES.md)</b>", table_hdr)
-        ],
-        [
-            Paragraph("<b>Storefront & Browsing</b>", table_cell_bold),
+            Paragraph("<b>Browsing & Design</b>", table_cell_bold),
             Paragraph(
-                "• <b>Luxury Aesthetic:</b> Bespoke Gold/Ivory/Dark palette with Cormorant Garamond serif & script typography.<br/>"
-                "• <b>Homepage Showcase:</b> 3-slide photo hero, trust strip, collection banners, dynamic 'Shop by Category' (curated 8 categories), bestsellers tabs (Festive/Anti-Tarnish), brand story, customer reviews, and Instagram gallery.<br/>"
-                "• <b>Catalog Architecture:</b> 2 Collections (Festive, Anti-Tarnish), 19 categories, sticky header with mega-menus, mobile drawer, instant search overlay, and dedicated category listing pages.<br/>"
-                "• <b>Product Detail Page:</b> High-res photo gallery with swipe/thumbnails, MRP strike-through with % discount, stock countdown ('Only 3 left'), accordion info tabs, sticky Add-to-Bag bar on phones, and automatic illustrated placeholders for unphotographed items.",
+                "• <b>Design:</b> Gold / ivory / black palette with serif + script typography, built for phones, tablets, and desktops.<br/>"
+                "• <b>Homepage:</b> 3-slide photo hero (auto-play, arrows, dots), trust strip, 2 collection banners, 'Shop by category' (max 8, chosen in admin) with 'View all categories' link, bestsellers with Festive / Anti Tarnish tabs, brand story, new arrivals, customer reviews, and Instagram gallery.<br/>"
+                "• <b>Collections & Categories:</b> 2 collections, 19 categories (Festive: Kashmiri Watches, Necklaces, Heritage Bangle Kada, Pendant Sets, AD Bangle Kada, Kashmiri Earrings, Moissanite Earrings, Festive Bracelets, Stud Earrings · Anti Tarnish: Mangalsutra, Bracelet Kada, Chain Bracelets, Rings, Hoop Earrings, Danglers Earrings, Studs Earrings, Chain Necklaces, Combo Necklace Packs, Watches).<br/>"
+                "• <b>Navigation:</b> Sticky header with collection mega-menus, mobile slide-in menu, rotating announcement bar (free-shipping threshold from admin settings).<br/>"
+                "• <b>Shop Pages:</b> Shop all, by collection, or by category with sorting (featured, newest, price, rating), price-band and in-stock filters, category chips, and 'Show more' pagination (12 at a time).<br/>"
+                "• <b>Dedicated Pages:</b> All categories, Bestsellers, New arrivals, Collections.<br/>"
+                "• <b>Search:</b> Search overlay with instant results (product name and category).<br/>"
+                "• <b>Product Page:</b> Photo gallery (thumbnails on desktop, swipe on phones), price with MRP and % off, rating, feature chips, stock status ('Only 3 left'), quantity selector, Add to bag / Buy now, wishlist, accordions (description, material, care, shipping), 'You may also love', sticky add-to-bag bar on phones, and automatic illustrated placeholders for products without photos.",
                 table_cell
             )
         ],
         [
-            Paragraph("<b>Cart, Wishlist & Checkout</b>", table_cell_bold),
+            Paragraph("<b>Bag, Wishlist & Checkout</b>", table_cell_bold),
             Paragraph(
-                "• <b>Dual Cart Experience:</b> Slide-out quick drawer and full bag page with real-time free-shipping progress meter.<br/>"
-                "• <b>Smart Wishlist:</b> Guest wishlist stored in browser, auto-merged into account upon customer login.<br/>"
-                "• <b>Server-Side Pricing:</b> Tamper-proof price calculation directly against PostgreSQL database (prevents price manipulation).<br/>"
-                "• <b>Atomic Checkout:</b> Single-transaction inventory reservation and coupon burning (prevents overselling).<br/>"
-                "• <b>Payment Gateway:</b> Razorpay integration (UPI, Credit/Debit cards, Netbanking) with automated webhook verification.<br/>"
-                "• <b>Cash on Delivery (COD):</b> Configurable COD fee and minimum order rules.",
+                "• <b>Bag:</b> Slide-out bag drawer and full bag page with free-shipping progress bar, quantity edits, remove, 'Complete the look' suggestions, and sticky checkout button on phones.<br/>"
+                "• <b>Wishlist:</b> Works for guests in browser, automatically saved and merged into account after sign-in.<br/>"
+                "• <b>Checkout:</b> Contact and delivery form (pre-filled from account default address), saved-address picker, live coupon validator (re-checked on bag/payment change), UPI / card / Cash on Delivery (COD), order summary, sticky pay button on phones.<br/>"
+                "• <b>Orders:</b> Order confirmation page, guest checkout supported.",
                 table_cell
             )
         ],
         [
             Paragraph("<b>Customer Accounts</b>", table_cell_bold),
             Paragraph(
-                "• <b>Passwordless OTP Registration:</b> 6-digit secure email OTP verification with attempt throttling.<br/>"
-                "• <b>Self-Service Portal:</b> Order history with status progress bar, courier tracking numbers, one-click cancellation.<br/>"
-                "• <b>Address Book:</b> Multi-address management (save, edit, delete, default delivery selection).<br/>"
-                "• <b>Automatic Guest Order Syncing:</b> Orders placed prior to account registration automatically attach to user profile.",
+                "• <b>Auth:</b> Register with emailed 6-digit OTP, sign in, forgot / reset password via OTP, sign out.<br/>"
+                "• <b>Account Area:</b> Overview (orders, wishlist, total spent), order history with pagination, order details with progress tracker and courier tracking number, order cancellation (while allowed), pay-again for unpaid online orders, saved address book (add/delete/default), profile edit.<br/>"
+                "• <b>Guest Order Linking:</b> Guest orders placed earlier with the same email attach automatically on sign-up.",
                 table_cell
             )
         ],
         [
-            Paragraph("<b>Enterprise Admin Suite (/admin)</b>", table_cell_bold),
+            Paragraph("<b>Content & SEO</b>", table_cell_bold),
             Paragraph(
-                "• <b>Executive Dashboard:</b> 30-day interactive sales charts, revenue metrics, top-selling categories, and low-stock alerts.<br/>"
-                "• <b>Product Management:</b> Server-paginated product catalog (20/page), Cloudinary photo uploader, cover photo selector, price/MRP edits, badges (Bestseller, Featured, New), SEO slug customizer.<br/>"
-                "• <b>Order Fulfillment Pipeline:</b> Comprehensive order workflow (Pending → Confirmed → Shipped → Delivered / Cancelled), tracking number assignment, and automatic inventory restoration on cancellation.<br/>"
-                "• <b>Coupon Controller:</b> Flat Rs. / Percentage off, expiry dates, per-customer limits, first-order-only rules.<br/>"
-                "• <b>Customer & Inquiries Hub:</b> Customer purchase history tracking, contact form inbox, newsletter subscriber export.<br/>"
-                "• <b>Store Settings:</b> Live adjustment of shipping fees, COD fees, free-shipping threshold, contact info, and admin password.",
-                table_cell
-            )
-        ],
-        [
-            Paragraph("<b>Security & Performance</b>", table_cell_bold),
-            Paragraph(
-                "• <b>Triple-Layer Rate Limiting:</b> Protection against brute-force logins, bot spam, and checkout floods.<br/>"
-                "• <b>CSRF & Session Security:</b> Encrypted SameSite=Lax httpOnly cookies, bcrypt cost 12 password hashing.<br/>"
-                "• <b>Automated Cron Engine:</b> Scheduled cleanup task releasing inventory from abandoned online orders after 1 hour.<br/>"
-                "• <b>SEO Optimization:</b> Pre-rendered pages, JSON-LD structured data for Google Rich Snippets, automated sitemap.xml & robots.txt.",
+                "• <b>Content Pages:</b> About, Care guide, FAQ, Contact (messages saved to admin), Shipping & returns (uses live fee settings), Privacy policy, Terms.<br/>"
+                "• <b>SEO:</b> Server-rendered catalogue, per-page meta titles/descriptions, Open Graph tags, product JSON-LD structured data, dynamic sitemap.xml and robots.txt, proper 404 status handling.",
                 table_cell
             )
         ]
     ]
 
-    features_table = Table(features_data, colWidths=[130, 390])
-    features_table.setStyle(TableStyle([
+    storefront_table = Table(storefront_data, colWidths=[120, 402])
+    storefront_table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), c_ink),
         ('BOX', (0, 0), (-1, -1), 0.5, c_line),
         ('INNERGRID', (0, 0), (-1, -1), 0.5, c_line),
         ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-        ('TOPPADDING', (0, 0), (-1, -1), 3.5),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 3.5),
+        ('TOPPADDING', (0, 0), (-1, -1), 3),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 3),
         ('LEFTPADDING', (0, 0), (-1, -1), 5),
         ('RIGHTPADDING', (0, 0), (-1, -1), 5),
     ]))
-    content.append(features_table)
+    content.append(storefront_table)
 
-    # Clean PageBreak so Page 2 starts with Commercial Quotation
+    # Page Break to Page 2
     content.append(PageBreak())
 
-    # 4. INVESTMENT & QUOTATION BREAKDOWN (Rs. 13,000)
-    content.append(Paragraph("3. Commercial Quotation & Investment Breakdown", h1_style))
+    # 3. ADMIN PANEL & BACKEND (DIRECT FROM FEATURES.MD)
+    content.append(Paragraph("2. Admin Panel & Backend Architecture (As specified in FEATURES.md)", h1_style))
+
+    admin_data = [
+        [
+            Paragraph("<b>Section</b>", table_hdr),
+            Paragraph("<b>Exact Capabilities Built (from FEATURES.md)</b>", table_hdr)
+        ],
+        [
+            Paragraph("<b>Admin Panel (/admin)</b>", table_cell_bold),
+            Paragraph(
+                "• <b>Dashboard:</b> Revenue, order count (with pending), customers, products, 30-day sales chart, top categories, recent orders, low-stock list (aggregated in database).<br/>"
+                "• <b>Products:</b> Paginated list (20/page) with search, category/status/stock filters, 1-click publish/unpublish, add/edit/delete, photo uploader (Cloudinary, multiple, reorder, cover), price + MRP, stock, badges, SEO slug.<br/>"
+                "• <b>Categories:</b> Add/edit/delete (blocked while has products), show/hide, choose max 8 on homepage, sort order.<br/>"
+                "• <b>Orders:</b> Paginated with status tabs, search, order detail, change status (Pending -> Confirmed -> Shipped -> Delivered / Cancelled), add tracking number, cancel with automatic restock & coupon release, ship/cancel emails.<br/>"
+                "• <b>Customers & Coupons:</b> Customer list with order counts & spent; coupon creator (flat/percent, minimum order, per-customer limit, first-order-only, COD switch, live usage counts).<br/>"
+                "• <b>Messages & Settings:</b> Contact inbox, newsletter subscriber count, shipping fee & COD fee controls, free-shipping limit, contact info, admin password change.",
+                table_cell
+            )
+        ],
+        [
+            Paragraph("<b>Backend & Security</b>", table_cell_bold),
+            Paragraph(
+                "• <b>PostgreSQL + Prisma:</b> 19 database tables, server-side tamper-proof pricing, atomic checkout transactions (prevents overselling), 1-hour unpaid order auto-cancellation cron job.<br/>"
+                "• <b>Payments & Emails (needs keys):</b> Razorpay UPI/card order creation, signature verification, webhook; Nodemailer HTML transactional emails (OTP, confirmation, shipped, cancelled); Cloudinary 8 MB photo upload.<br/>"
+                "• <b>Security:</b> Bcrypt password hashing (cost 12), encrypted httpOnly SameSite sessions, 3-layer rate limiting (per-IP flood limiter, per-IP write limiter, route-specific limits), CSRF protection, and Zod input validation.",
+                table_cell
+            )
+        ],
+        [
+            Paragraph("<b>Explicitly Excluded</b><br/><i>(Per FEATURES.md Section 7)</i>", table_cell_bold),
+            Paragraph(
+                "Automated refunds (refund manually in Razorpay), GST invoices, courier/shipping-label auto-generation, customer-submitted product reviews, multi-staff admin roles, multi-language.",
+                table_cell
+            )
+        ]
+    ]
+
+    admin_table = Table(admin_data, colWidths=[120, 402])
+    admin_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), c_ink),
+        ('BOX', (0, 0), (-1, -1), 0.5, c_line),
+        ('INNERGRID', (0, 0), (-1, -1), 0.5, c_line),
+        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        ('TOPPADDING', (0, 0), (-1, -1), 3),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 3),
+        ('LEFTPADDING', (0, 0), (-1, -1), 5),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 5),
+    ]))
+    content.append(admin_table)
+    content.append(Spacer(1, 8))
+
+    # 4. COMMERCIAL QUOTATION & PAYMENT TERMS (Rs. 13,000)
+    content.append(Paragraph("3. Commercial Quotation & Payment Terms", h1_style))
     content.append(Paragraph(
-        "Complete end-to-end turnkey development, integrations, and deployment package for Jewels by Richa:",
+        "Fixed-price turnkey delivery for the complete website, backend database, and admin management suite:",
         body_style
     ))
-    content.append(Spacer(1, 6))
+    content.append(Spacer(1, 4))
 
     pricing_data = [
         [
-            Paragraph("<b>Module / Deliverable</b>", table_hdr),
-            Paragraph("<b>Scope Summary</b>", table_hdr),
+            Paragraph("<b>Payment Stage</b>", table_hdr),
+            Paragraph("<b>Deliverable Scope</b>", table_hdr),
+            Paragraph("<b>Status</b>", table_hdr),
             Paragraph("<b>Amount (INR)</b>", table_hdr)
         ],
         [
-            Paragraph("<b>Module 1: Luxury Storefront & UI/UX</b>", table_cell_bold),
-            Paragraph("Custom theme, mobile-responsive layout, mega-menus, product detail page, search, cart & wishlist.", table_cell),
-            Paragraph("Rs. 4,500", table_cell_bold)
-        ],
-        [
-            Paragraph("<b>Module 2: Checkout, Payment & Coupon Engine</b>", table_cell_bold),
-            Paragraph("Razorpay gateway (UPI/Cards), Cash on Delivery, atomic stock lock, server pricing, coupon validation.", table_cell),
-            Paragraph("Rs. 2,500", table_cell_bold)
-        ],
-        [
-            Paragraph("<b>Module 3: Customer Accounts & Notification Engine</b>", table_cell_bold),
-            Paragraph("Email OTP verification, self-service tracking, address book, automated HTML email triggers.", table_cell),
+            Paragraph("<b>Advance Payment</b>", table_cell_bold),
+            Paragraph("Project Kickoff, initial UI build & repository architectural setup", table_cell),
+            Paragraph("<font color='#1E6B37'><b>PAID</b></font>", table_cell_bold),
             Paragraph("Rs. 2,000", table_cell_bold)
         ],
         [
-            Paragraph("<b>Module 4: Enterprise Admin Management Suite</b>", table_cell_bold),
-            Paragraph("Dashboard analytics, product catalog manager, photo upload, order fulfillment pipeline, coupon & settings controller.", table_cell),
-            Paragraph("Rs. 2,500", table_cell_bold)
+            Paragraph("<b>Balance Payment</b>", table_cell_bold),
+            Paragraph("Final handover, client account connections, domain setup & taking the website live", table_cell),
+            Paragraph("<b>Payable When Live</b>", table_cell_bold),
+            Paragraph("Rs. 11,000", table_cell_bold)
         ],
         [
-            Paragraph("<b>Module 5: Database, Security, SEO & Deployment</b>", table_cell_bold),
-            Paragraph("PostgreSQL setup, Prisma ORM, 3-layer rate limiting, automated stock release crons, JSON-LD, domain launch.", table_cell),
-            Paragraph("Rs. 1,500", table_cell_bold)
-        ],
-        [
-            Paragraph("<b>TOTAL PROJECT INVESTMENT</b>", table_cell_bold),
-            Paragraph("<b>Complete bespoke platform delivery with 100% codebase ownership</b>", table_cell_bold),
+            Paragraph("<b>TOTAL PROJECT FEE</b>", table_cell_bold),
+            Paragraph("<b>Full custom storefront, admin panel, PostgreSQL backend & 100% code ownership</b>", table_cell_bold),
+            Paragraph("<b>Fixed</b>", table_cell_bold),
             Paragraph("<font color='#1A1411'><b>Rs. 13,000</b></font>", table_cell_bold)
         ]
     ]
 
-    pricing_table = Table(pricing_data, colWidths=[150, 270, 100])
+    pricing_table = Table(pricing_data, colWidths=[110, 260, 80, 72])
     pricing_table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), c_ink),
         ('BOX', (0, 0), (-1, -1), 0.5, c_line),
         ('INNERGRID', (0, 0), (-1, -1), 0.5, c_line),
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-        ('TOPPADDING', (0, 0), (-1, -1), 5),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 5),
-        ('LEFTPADDING', (0, 0), (-1, -1), 6),
-        ('RIGHTPADDING', (0, 0), (-1, -1), 6),
-        ('BACKGROUND', (0, 6), (-1, 6), c_card_bg),
+        ('TOPPADDING', (0, 0), (-1, -1), 4),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
+        ('LEFTPADDING', (0, 0), (-1, -1), 5),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 5),
+        ('BACKGROUND', (0, 1), (-1, 1), c_bg_light),
+        ('BACKGROUND', (0, 3), (-1, 3), c_card_bg),
     ]))
     content.append(pricing_table)
-    content.append(Spacer(1, 14))
+    content.append(Spacer(1, 8))
 
-    # 5. MILESTONE PAYMENT SCHEDULE
-    content.append(Paragraph("4. Milestone Payment Schedule", h1_style))
-    milestone_data = [
-        [
-            Paragraph("<b>Milestone</b>", table_hdr),
-            Paragraph("<b>Deliverable Stage</b>", table_hdr),
-            Paragraph("<b>Share</b>", table_hdr),
-            Paragraph("<b>Amount (INR)</b>", table_hdr)
-        ],
-        [
-            Paragraph("<b>Milestone 1</b>", table_cell_bold),
-            Paragraph("Project Kickoff & Architectural Baseline", table_cell),
-            Paragraph("40%", table_cell),
-            Paragraph("Rs. 5,200", table_cell_bold)
-        ],
-        [
-            Paragraph("<b>Milestone 2</b>", table_cell_bold),
-            Paragraph("Storefront, Catalog & Admin Suite Functional Review", table_cell),
-            Paragraph("30%", table_cell),
-            Paragraph("Rs. 3,900", table_cell_bold)
-        ],
-        [
-            Paragraph("<b>Milestone 3</b>", table_cell_bold),
-            Paragraph("Final Handover, Production Deployment & Domain Launch", table_cell),
-            Paragraph("30%", table_cell),
-            Paragraph("Rs. 3,900", table_cell_bold)
-        ],
-    ]
-    milestone_table = Table(milestone_data, colWidths=[80, 280, 60, 100])
-    milestone_table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), c_ink),
-        ('BOX', (0, 0), (-1, -1), 0.5, c_line),
-        ('INNERGRID', (0, 0), (-1, -1), 0.5, c_line),
-        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-        ('TOPPADDING', (0, 0), (-1, -1), 5),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 5),
-        ('LEFTPADDING', (0, 0), (-1, -1), 6),
-        ('RIGHTPADDING', (0, 0), (-1, -1), 6),
-    ]))
-    content.append(milestone_table)
-    content.append(Spacer(1, 14))
-
-    # 6. SUPPORT & PREREQUISITES
-    content.append(Paragraph("5. Support, Warranty & Client Prerequisites", h1_style))
+    # 5. GO-LIVE REQUIREMENTS & CLIENT ACCOUNTS
+    content.append(Paragraph("4. Go-Live Requirements (What We Need from Client)", h1_style))
     content.append(Paragraph(
-        "• <b>30 Days Post-Launch Support:</b> Comprehensive warranty covering bug fixes, technical adjustments, and staff walkthrough.<br/>"
-        "• <b>Client Prerequisites:</b> Client provides account keys for Razorpay, Cloudinary, and SMTP email as outlined in the checklist.<br/>"
-        "• <b>Zero Ongoing Platform Subscription:</b> No recurring platform fees (unlike Shopify monthly app subscriptions).",
+        "To take the website live and enable online payments and emails, the client provides their account credentials as detailed in the <i>Information Checklist</i>: "
+        "<b>1. Razorpay</b> (KYC approved for live payments & webhook), "
+        "<b>2. Cloudinary</b> (free tier for product photo uploads), "
+        "<b>3. SMTP Email</b> (for sending OTPs and customer notifications), "
+        "<b>4. Domain & DNS Access</b> (to link jewelsbyricha.in to Vercel).",
         body_style
     ))
-    content.append(Spacer(1, 18))
+    content.append(Spacer(1, 10))
 
-    # 7. SIGN-OFF BLOCK
+    # 6. SIGN-OFF BLOCK
     sign_data = [
         [
-            Paragraph("<b>Prepared & Submitted by:</b><br/><br/>Priyank Bohra<br/>Lead Technical Developer", table_cell),
+            Paragraph("<b>Prepared by:</b><br/><br/>Priyank Bohra<br/>Lead Technical Developer", table_cell),
             Paragraph("<b>Accepted & Approved by:</b><br/><br/>Richa Marwaha Jain<br/>Founder, Jewels by Richa", table_cell)
         ],
         [
@@ -408,10 +359,10 @@ def build_pdf(filename="docs/Jewels_by_Richa_Quotation_and_Features.pdf"):
         ('BOX', (0, 0), (-1, -1), 0.5, c_line),
         ('INNERGRID', (0, 0), (-1, -1), 0.5, c_line),
         ('BACKGROUND', (0, 0), (-1, -1), c_bg_light),
-        ('TOPPADDING', (0, 0), (-1, -1), 6),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
-        ('LEFTPADDING', (0, 0), (-1, -1), 8),
-        ('RIGHTPADDING', (0, 0), (-1, -1), 8),
+        ('TOPPADDING', (0, 0), (-1, -1), 4.5),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 4.5),
+        ('LEFTPADDING', (0, 0), (-1, -1), 6),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 6),
     ]))
     content.append(sign_table)
 
